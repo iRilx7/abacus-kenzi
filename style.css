@@ -2,11 +2,9 @@
   --bg:#fff5f4; --card:#ffffff; --text:#25324d; --muted:#60708f; --border:#e6e8f0;
   --good:#14b85e; --bad:#e53935; --pri1:#ff7a59; --pri2:#ffb74d; --accent:#5ec8ff;
 }
-*{box-sizing:border-box}
-html,body{height:100%}
+*{box-sizing:border-box; touch-action: manipulation;} /* help stop smart-zoom on taps */
+html,body{height:100%; -webkit-text-size-adjust:100%;}
 input,button,select,textarea{font-size:18px;}
-html{-webkit-text-size-adjust:100%;}
-button{touch-action:manipulation;}
 body{margin:0;background:radial-gradient(800px 300px at 50% -5%, #fff0e9, transparent 60%), var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Inter,Roboto,Arial}
 .top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
 .brand{font-weight:900;font-size:1.2rem}
@@ -77,8 +75,10 @@ h2{margin:0 0 10px}
 .sheetBrand{font-weight:900}
 .sheetGrid{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
 .sheetCol{border:2px solid var(--border);border-radius:12px;padding:8px;background:#fff;min-height:160px}
-.sheetCol h4{margin:0 0 6px;font-weight:900;text-align:center}
+.sheetCol h4{margin:0;font-weight:900;text-align:center;font-size:1rem}
+.sheetCol .divider{height:8px;border-bottom:2px dashed var(--border);margin:4px 0 6px 0} /* the clear line under header */
 .sheetCol .line{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-weight:900;text-align:center;padding:4px 0;border-bottom:1px dashed #eaeef6}
+.sheetCol .ans{margin-top:6px;text-align:center;font-weight:900;color:#1b7a3c}
 @media print{
   body{background:white}
   .top, .tabs, .controls.t, .t.history, .t.prev, .t.play, .foot{display:none}

@@ -1,12 +1,20 @@
 // © 2025 Kenzi. All rights reserved.
 (()=>{
+  // ---------- iOS double-tap zoom guard ----------
+  let lastTouchEnd=0;
+  document.addEventListener('touchend', function(e){
+    const now=Date.now();
+    if(now-lastTouchEnd<=350){ e.preventDefault(); }
+    lastTouchEnd=now;
+  }, {passive:false});
+
   // ---------- i18n ----------
   const I = {
     ar: {
       brand:"🧮 كنزي | تدريب الأباكوس",
       trainer:"التدريب", worksheet:"ورقة تدريبات",
       setup:"الإعداد", mode:"العملية", mixed:"+ / − (مخلوط)", digits:"عدد الخانات لكل رقم",
-      strictHelp:"الخانات الصارمة: إذا اخترت 2 خانتين فستظهر أرقام من 10 إلى 99 فقط (لا تظهر 1-خانة). في الطرح نلتزم بالخانتين ونمنع الناتج السالب بتبديل تلك الخطوة إلى جمع عند الحاجة.",
+      strictHelp:"الخانات الصارمة: إذا اخترت ٢ خانتين فستظهر أرقام من 10 إلى 99 فقط (لا تظهر 1-خانة). في الطرح نلتزم بالخانتين ونمنع الناتج السالب بتبديل تلك الخطوة إلى جمع عند الحاجة.",
       strictEx:"مثال: 35 − 12 + 47 (كل رقم من خانتين)",
       howmany:"عدد الأرقام المعروضة", speed:"السرعة",
       flash:"مدة ظهور الرقم (ث)", gap:"الفاصل بين الأرقام (ث)",
@@ -22,71 +30,72 @@
       // worksheet
       wtitle:"مولّد ورقة تدريبات", wcols:"عدد الأعمدة", wrows:"عدد الأرقام بكل عمود",
       wdigits:"الخانات", wmode:"نوع الإشارات", wgenerate:"توليد ورقة", wprint:"طباعة",
-      whelp:"الورقة تشبه أسلوب تدريب الأطفال: أرقام تحت بعضها بإشارات +/−.",
+      whelp:"أرقام تحت بعضها بإشارات +/−. وضعنا خطاً تحت رقم العمود حتى لا يختلط كجزء من السؤال.",
+      wshowans:"إظهار الإجابة لكل عمود",
       title:"🧮 كنزي | تدريب الأباكوس للأطفال (Kenzi Abacus)"
     },
     en: {
       brand:"🧮 Kenzi | Abacus Trainer",
       trainer:"Trainer", worksheet:"Worksheet",
       setup:"Setup", mode:"Mode", mixed:"Mixed +/-", digits:"Digits per number",
-      strictHelp:"Strict digits: choosing 2 means every number is 10–99. Subtractions keep the same digits; if it would go negative, switch to addition.",
+      strictHelp:"Strict digits: choosing 2 means every number is 10–99. Subtractions keep the same digits; if negative, switch to addition.",
       strictEx:"Example: 35 − 12 + 47 (all two-digit)",
       howmany:"How many numbers", speed:"Speed",
-      flash:"Flash time (s)", gap:"Gap (s)",
+      flash:"Flash (s)", gap:"Gap (s)",
       flashExplain:"Flash = how long a number shows. Gap = quiet time between numbers.",
       beep:"Beep each number", noneg:"No negative total", strict:"Strict digits",
       start:"Start", pause:"Pause", stop:"Stop", keys:"Shortcuts: Space=start/pause • Enter=submit • R=restart",
       play:"Play", num:"Number", elapsed:"Elapsed", submit:"Submit",
-      previous:"Previous question", history:"History", export:"Export CSV", clear:"Clear",
+      previous:"Previous", history:"History", export:"Export CSV", clear:"Clear",
       slow:"Slow", normal:"Normal", fast:"Fast",
       ready:"Get ready!", readyDone:"Go!", correct:"Correct!", answer:"Answer: ",
       last:"Last",
       corner:"Show corner stack",
       // worksheet
-      wtitle:"Worksheet Generator", wcols:"Columns", wrows:"Rows per column",
+      wtitle:"Worksheet Generator", wcols:"Columns", wrows:"Rows/column",
       wdigits:"Digits", wmode:"Signs", wgenerate:"Generate", wprint:"Print",
-      whelp:"Makes kids-style columns of +/− numbers for paper practice.",
+      whelp:"Kid-style stacked numbers with +/- signs. We added a clear divider under the column number.",
+      wshowans:"Show answer per column",
       title:"🧮 Kenzi | Abacus Trainer (Kids)"
     }
   };
   let lang="ar";
   const $ = s=>document.querySelector(s);
-  const $all = s=>Array.from(document.querySelectorAll(s));
+  const $$ = s=>Array.from(document.querySelectorAll(s));
   function applyI18n(){
     const t=I[lang];
     document.documentElement.lang=lang;
     document.documentElement.dir=(lang==="ar")?"rtl":"ltr";
     document.title=t.title;
     $("#brand").textContent=t.brand;
-    $all("[data-i]").forEach(el=>{ const k=el.getAttribute("data-i"); if(t[k]) el.textContent=t[k]; });
+    $$("[data-i]").forEach(el=>{ const k=el.getAttribute("data-i"); if(t[k]) el.textContent=t[k]; });
     $("#status").textContent=(lang==="ar")?"جاهز":"Idle";
     $("#readyText").textContent=t.ready;
   }
-  $all(".lang .chip").forEach(b=> b.onclick=()=>{ lang=b.dataset.lang; applyI18n(); });
+  $$(".lang .chip").forEach(b=> b.onclick=()=>{ lang=b.dataset.lang; applyI18n(); });
   applyI18n();
 
-  // -------- tabs (trainer / worksheet) --------
-  $all(".tab").forEach(tab=>{
+  // tabs
+  $$(".tab").forEach(tab=>{
     tab.onclick=()=>{
-      $all(".tab").forEach(t=>t.classList.remove("active"));
+      $$(".tab").forEach(t=>t.classList.remove("active"));
       tab.classList.add("active");
       const scr=tab.dataset.tab;
       document.querySelector("main.layout").setAttribute("data-screen", scr);
-      $all(".card.t").forEach(c=> c.style.display = (scr==="trainer")? "block":"none");
-      $all(".card.w").forEach(c=> c.style.display = (scr==="worksheet")? "block":"none");
+      $$(".card.t").forEach(c=> c.style.display=(scr==="trainer")?"block":"none");
+      $$(".card.w").forEach(c=> c.style.display=(scr==="worksheet")?"block":"none");
     };
   });
-  // default view
-  $all(".card.w").forEach(c=> c.style.display="none");
+  $$(".card.t").forEach(c=> c.style.display="none"); // default show worksheet first for your screenshot
 
-  // ---------- helpers ----------
+  // helpers
   const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
   const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
   const fmt=s=>(Math.round(s*10)/10).toFixed(1)+'s';
   const s2ms=s=>Math.round(parseFloat(s)*1000);
   const isTouch=('ontouchstart' in window)|| (navigator.maxTouchPoints>0);
 
-  // ---------- trainer refs ----------
+  // trainer refs
   const status=$("#status"), displayText=$("#displayText"), idx=$("#idx"), total=$("#total"), elapsed=$("#elapsed");
   const answer=$("#answer"), result=$("#result");
   const overlay=$("#overlay"), barFill=$("#barFill");
@@ -94,7 +103,6 @@
   const cornerStack=$("#cornerStack");
   const cornerToggle=$("#cornerToggle");
 
-  // prevent keyboard on phones
   if(isTouch){ answer.setAttribute('readonly','readonly'); answer.setAttribute('inputmode','none'); }
   else { answer.removeAttribute('readonly'); answer.setAttribute('inputmode','numeric'); }
 
@@ -106,15 +114,15 @@
   let strictDigits=true, noNegative=true, beeps=true;
   $("#modeTiles").addEventListener("click", e=>{
     if(!e.target.classList.contains("tile")) return;
-    mode=e.target.dataset.val; $all("#modeTiles .tile").forEach(x=>x.classList.remove("active")); e.target.classList.add("active");
+    mode=e.target.dataset.val; $$("#modeTiles .tile").forEach(x=>x.classList.remove("active")); e.target.classList.add("active");
   });
   const digitsOut=$("#digitsOut"), countOut=$("#countOut"), flashOut=$("#flashOut"), gapOut=$("#gapOut");
   $("#digitsMinus").onclick=()=>{ digits=clamp(digits-1,1,6); digitsOut.textContent=digits; };
   $("#digitsPlus").onclick =()=>{ digits=clamp(digits+1,1,6); digitsOut.textContent=digits; };
-  $all("[data-d]").forEach(b=> b.onclick=()=>{ digits=+b.dataset.d; digitsOut.textContent=digits; });
+  $$("[data-d]").forEach(b=> b.onclick=()=>{ digits=+b.dataset.d; digitsOut.textContent=digits; });
   $("#countMinus").onclick =()=>{ count=clamp(count-1,1,50); countOut.textContent=count; };
   $("#countPlus").onclick  =()=>{ count=clamp(count+1,1,50); countOut.textContent=count; };
-  $all("[data-c]").forEach(b=> b.onclick=()=>{ count=+b.dataset.c; countOut.textContent=count; });
+  $$("[data-c]").forEach(b=> b.onclick=()=>{ count=+b.dataset.c; countOut.textContent=count; });
   const stepS=v=>Math.round((v+Number.EPSILON)*10)/10;
   $("#flashMinus").onclick=()=>{ flash=clamp(stepS(flash-0.1),0.1,5); flashOut.textContent=flash.toFixed(1); };
   $("#flashPlus").onclick =()=>{ flash=clamp(stepS(flash+0.1),0.1,5); flashOut.textContent=flash.toFixed(1); };
@@ -130,10 +138,8 @@
     if(!beeps) return;
     try{
       ctx = ctx || new (window.AudioContext||window.webkitAudioContext)();
-      const o=ctx.createOscillator(), g=ctx.createGain();
-      o.type="sine"; o.frequency.value=freq; g.gain.value=vol;
-      o.connect(g); g.connect(ctx.destination);
-      o.start(); setTimeout(()=>o.stop(), dur*1000);
+      const o=ctx.createOscillator(), g=ctx.createGain(); o.type="sine"; o.frequency.value=freq; g.gain.value=vol;
+      o.connect(g); g.connect(ctx.destination); o.start(); setTimeout(()=>o.stop(), dur*1000);
     }catch{}
   }
 
@@ -213,7 +219,6 @@
       elapsed.textContent = fmt((performance.now()-state.startTs)/1000);
       await sleep(fms); if(!state.running) return; await waitWhilePaused();
 
-      // Add to corner stack after hiding
       const txt=(it.sign==='×'||it.sign==='')? String(it.val):(signTxt+it.val).trim();
       const node=document.createElement("div"); node.className="bubble"; node.textContent=txt;
       cornerStack.appendChild(node);
@@ -228,11 +233,11 @@
 
   function stop(reset=true){
     state.running=false; state.paused=false;
-    status.textContent=(lang==="ar")?"جاهز":"Idle";
     $("#startBtn").disabled=false; $("#pauseBtn").disabled=true; $("#stopBtn").disabled=true;
     if(reset){ displayText.textContent="—"; document.getElementById("display").classList.add("dim"); }
     idx.textContent="0"; total.textContent="0"; elapsed.textContent="0.0s";
     overlay.style.display="none"; progFill.style.width="0%";
+    $("#status").textContent=(lang==='ar')?'جاهز':'Idle';
   }
 
   function seqToBubbles(seq){
@@ -245,36 +250,23 @@
     });
   }
 
-  function celebrateOK(){
-    try{ if(navigator.vibrate) navigator.vibrate(80); }catch{}
-  }
-
   function submit(e){
-    if(e){ e.preventDefault(); } // stop any zoom/jump on Enter
+    if(e){ e.preventDefault(); }
     const raw=(answer.value||"").trim(); if(raw==="") return;
     const guess=Number(raw.replace(/[,\s_]/g,""));
     const ok=(guess===state.answer);
-
     seqToBubbles(state.seq);
-    prevAns.textContent = I[lang].answer + state.answer;
-
+    prevAns.textContent = (lang==='ar'?'الإجابة: ':'Answer: ')+ state.answer;
     result.style.display="inline-block";
-    result.textContent = ok ? I[lang].correct : I[lang].answer + state.answer;
+    result.textContent = ok ? (lang==='ar'?'صحيح!':'Correct!') : (lang==='ar'?'الإجابة: ':'Answer: ')+state.answer;
     result.style.background = ok ? "rgba(20,184,94,.12)" : "rgba(229,57,53,.10)";
     result.style.border = ok ? "2px solid rgba(20,184,94,.35)" : "2px solid rgba(229,57,53,.35)";
-    if(ok) celebrateOK();
-
-    const line=`[${new Date().toLocaleTimeString()}] ${mode.toUpperCase()} • ${digits}-digit • ${count} • ${flash}s/${gap}s • Ans=${state.answer} • Yours=${raw} • ${ok?'✔':'✘'}`;
-    const li=document.createElement("li"); li.textContent=line; document.getElementById("hist").prepend(li);
-    while(document.getElementById("hist").children.length>150){ document.getElementById("hist").removeChild(document.getElementById("hist").lastChild); }
-
     $("#startBtn").disabled=false; $("#pauseBtn").disabled=true; $("#stopBtn").disabled=true;
-    status.textContent=(lang==="ar")?"انتهى":"Finished";
-    if(isTouch){ answer.blur(); } // kill zoom on mobile
+    if(isTouch){ answer.blur(); }
   }
 
   $("#startBtn").onclick=()=>{ stop(false); run(); };
-  $("#pauseBtn").onclick=()=>{ if(!state.running) return; state.paused=!state.paused; $("#pauseBtn").textContent=state.paused?I[lang].start:I[lang].pause; status.textContent=state.paused?((lang==="ar")?"متوقف":"Paused"):((lang==="ar")?"يعمل":"Running"); };
+  $("#pauseBtn").onclick=()=>{ if(!state.running) return; state.paused=!state.paused; $("#pauseBtn").textContent=state.paused?(lang==='ar'?'ابدأ':'Start'):(lang==='ar'?'إيقاف مؤقت':'Pause'); $("#status").textContent=state.paused?(lang==='ar'?'متوقف':'Paused'):(lang==='ar'?'يعمل':'Running'); };
   $("#stopBtn").onclick=()=> stop();
   $("#submitBtn").onclick=(e)=>submit(e);
 
@@ -285,7 +277,7 @@
       if(e.code==="Space"){ e.preventDefault(); if(!state.running){ stop(false); run(); } else { $("#pauseBtn").click(); } }
       if(e.key.toLowerCase()==="r"){ stop(false); run(); }
     });
-  }else{
+  } else {
     document.addEventListener("keydown", e=>{ if(e.code==="Space") e.preventDefault(); });
   }
   $("#keypad").addEventListener("click", e=>{
@@ -306,10 +298,10 @@
   function sleep(ms){ return new Promise(res=>setTimeout(res,ms)); }
   async function waitWhilePaused(){ while(state.paused && state.running){ await sleep(80);} }
 
-  // ---------- Worksheet generator ----------
-  let wCols=10, wRows=5, wDigits=2, wMode="mix";
+  // Worksheet generator
+  let wCols=10, wRows=5, wDigits=2, wMode="mix", wShowAns=false;
   const wColsOut=$("#wColsOut"), wRowsOut=$("#wRowsOut"), wDigitsOut=$("#wDigitsOut");
-  const wColClamp=(n)=>clamp(n,1,20), wRowClamp=(n)=>clamp(n,3,12);
+  const wColClamp=n=>clamp(n,1,20), wRowClamp=n=>clamp(n,3,12);
   $("#wColsMinus").onclick=()=>{ wCols=wColClamp(wCols-1); wColsOut.textContent=wCols; };
   $("#wColsPlus").onclick =()=>{ wCols=wColClamp(wCols+1); wColsOut.textContent=wCols; };
   $("#wRowsMinus").onclick=()=>{ wRows=wRowClamp(wRows-1); wRowsOut.textContent=wRows; };
@@ -318,31 +310,36 @@
   $("#wDigitsPlus").onclick =()=>{ wDigits=clamp(wDigits+1,1,3); wDigitsOut.textContent=wDigits; };
   $("#wModeTiles").addEventListener("click", e=>{
     if(!e.target.classList.contains("tile")) return;
-    wMode=e.target.dataset.val; $all("#wModeTiles .tile").forEach(x=>x.classList.remove("active")); e.target.classList.add("active");
+    wMode=e.target.dataset.val; $$("#wModeTiles .tile").forEach(x=>x.classList.remove("active")); e.target.classList.add("active");
   });
+  $("#wShowAns").onchange=e=>{ wShowAns = e.target.checked; };
 
   function riDigits(d){ const a=Math.pow(10,d-1), b=Math.pow(10,d)-1; return ri(a,b); }
   function signPick(){ return wMode==="add"?'+': wMode==="sub"?'-': (Math.random()<0.5?'+':'-'); }
 
   function makeSheet(){
     const grid=$("#sheet"); grid.innerHTML="";
-    $("#sheetMeta").textContent = new Date().toLocaleString();
+    $("#sheetMeta").textContent=new Date().toLocaleString();
     for(let c=1;c<=wCols;c++){
       const col=document.createElement("div"); col.className="sheetCol";
       const h=document.createElement("h4"); h.textContent=String(c); col.appendChild(h);
+      const div=document.createElement("div"); div.className="divider"; col.appendChild(div);
+      let sum=0;
       for(let r=0;r<wRows;r++){
         const line=document.createElement("div"); line.className="line";
         const s=signPick(); const num=riDigits(wDigits);
-        // sign on its own line style like the photo: show s num
-        line.textContent = (s==='+' ? '' : '−') + String(num);
+        if(s==='+'){ sum += num; line.textContent = String(num); }
+        else { sum -= num; line.textContent = '−' + String(num); }
         col.appendChild(line);
+      }
+      if(wShowAns){
+        const a=document.createElement("div"); a.className="ans"; a.textContent=(lang==='ar'?'الإجابة: ':'Ans: ')+String(sum);
+        col.appendChild(a);
       }
       grid.appendChild(col);
     }
   }
-
   $("#genSheet").onclick=makeSheet;
   $("#printSheet").onclick=()=>window.print();
-  // generate initial sheet
   makeSheet();
 })();

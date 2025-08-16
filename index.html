@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>🧮 كنزي | تدريب الأباكوس للأطفال (Kenzi Abacus)</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand" id="brand">🧮 كنزي | تدريب الأباكوس</div>
+    <div class="right">
+      <div class="lang">
+        <button class="chip" data-lang="ar">العربية</button>
+        <button class="chip" data-lang="en">English</button>
+      </div>
+      <span id="status" class="pill">جاهز</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Controls -->
+    <section class="card">
+      <h2 data-i="setup">الإعداد</h2>
+
+      <div class="group">
+        <div class="label" data-i="mode">العملية</div>
+        <div class="tiles" id="modeTiles">
+          <button data-val="add" class="tile">+</button>
+          <button data-val="sub" class="tile">−</button>
+          <button data-val="mix" class="tile active" data-i="mixed">+ / − (مخلوط)</button>
+          <button data-val="mul" class="tile">×</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="label" data-i="digits">عدد الخانات لكل رقم</div>
+        <div class="row">
+          <div class="stepper">
+            <button id="digitsMinus" class="btn sm">−</button>
+            <div class="num" id="digitsOut">1</div>
+            <button id="digitsPlus" class="btn sm">+</button>
+          </div>
+          <div class="chips">
+            <button class="chip" data-d="1">1</button>
+            <button class="chip" data-d="2">2</button>
+            <button class="chip" data-d="3">3</button>
+          </div>
+        </div>
+        <div class="help" data-i="strictHelp">
+          <b>الخانات الصارمة</b>: إذا اخترت 2 خانتين فستظهر أرقام من <b>10 إلى 99</b> فقط (لن تظهر 1-خانة مثل 7).
+          في الطرح نلتزم بالخانتين ونمنع الناتج السالب بتبديل تلك الخطوة إلى جمع عند الحاجة.
+          <div class="example" data-i="strictEx">مثال: 35 − 12 + 47 (كل رقم من خانتين)</div>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="label" data-i="howmany">عدد الأرقام المعروضة</div>
+        <div class="row">
+          <div class="stepper">
+            <button id="countMinus" class="btn sm">−</button>
+            <div class="num" id="countOut">3</div>
+            <button id="countPlus" class="btn sm">+</button>
+          </div>
+          <div class="chips">
+            <button class="chip" data-c="3">3</button>
+            <button class="chip" data-c="5">5</button>
+            <button class="chip" data-c="10">10</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="label" data-i="speed">السرعة</div>
+        <div class="row wrap">
+          <div class="mini">
+            <div class="small" data-i="flash">مدة ظهور الرقم (ث)</div>
+            <div class="stepper">
+              <button id="flashMinus" class="btn sm">−</button>
+              <div class="num" id="flashOut">1.0</div>
+              <button id="flashPlus" class="btn sm">+</button>
+            </div>
+          </div>
+          <div class="mini">
+            <div class="small" data-i="gap">الفاصل بين الأرقام (ث)</div>
+            <div class="stepper">
+              <button id="gapMinus" class="btn sm">−</button>
+              <div class="num" id="gapOut">0.2</div>
+              <button id="gapPlus" class="btn sm">+</button>
+            </div>
+          </div>
+          <div class="chips">
+            <button class="chip" data-flash="0.8" data-gap="0.2" data-i="slow">بطيء</button>
+            <button class="chip" data-flash="0.6" data-gap="0.2" data-i="normal">عادي</button>
+            <button class="chip" data-flash="0.4" data-gap="0.1" data-i="fast">سريع</button>
+          </div>
+        </div>
+        <div class="help" data-i="flashExplain">
+          <b>المدة</b> = زمن عرض كل رقم. <b>الفاصل</b> = زمن الصمت بين رقمٍ وآخر.
+        </div>
+      </div>
+
+      <div class="group toggles">
+        <label><input id="beep" type="checkbox" checked> <span data-i="beep">صوت عند كل رقم</span></label>
+        <label><input id="noNegative" type="checkbox" checked> <span data-i="noneg">لا مجموع سالب</span></label>
+        <label><input id="strictDigits" type="checkbox" checked> <span data-i="strict">خانات صارمة</span></label>
+      </div>
+
+      <div class="actions">
+        <button id="startBtn" class="btn primary big" data-i="start">ابدأ</button>
+        <button id="pauseBtn" class="btn" disabled data-i="pause">إيقاف مؤقت</button>
+        <button id="stopBtn" class="btn danger" disabled data-i="stop">إيقاف</button>
+      </div>
+      <div class="hint" data-i="keys">اختصارات: مسافة = ابدأ/أوقف • إنتر = إرسال • R = إعادة</div>
+    </section>
+
+    <!-- Play -->
+    <section class="card">
+      <h2 data-i="play">اللعب</h2>
+
+      <div class="display dim" id="display">—</div>
+      <!-- corner "last number" bubble -->
+      <div class="lastCorner">
+        <span class="label" data-i="last">السابق</span>
+        <span id="lastBubble" class="bubble small">—</span>
+      </div>
+
+      <div class="prog"><div class="progFill" id="progFill"></div></div>
+
+      <div class="row wrap">
+        <div><span data-i="num">الرقم</span>: <b id="idx">0</b>/<span id="total">0</span></div>
+        <div class="spacer"></div>
+        <div><span data-i="elapsed">الوقت</span>: <b id="elapsed">0.0s</b></div>
+      </div>
+
+      <div class="answer" id="answerWrap" style="display:none">
+        <input id="answer" type="text" inputmode="numeric" placeholder="..." />
+        <button id="submitBtn" class="btn primary" data-i="submit">إرسال</button>
+        <span id="result" class="pill" style="display:none"></span>
+      </div>
+
+      <div class="keypad" id="keypad">
+        <button>7</button><button>8</button><button>9</button>
+        <button>4</button><button>5</button><button>6</button>
+        <button>1</button><button>2</button><button>3</button>
+        <button>0</button><button>←</button><button>✖</button>
+      </div>
+    </section>
+
+    <!-- Previous sequence -->
+    <section class="card">
+      <h2 data-i="previous">السؤال السابق</h2>
+      <div id="prevSeq" class="seq"></div>
+      <div class="small muted" id="prevAns"></div>
+    </section>
+
+    <!-- History -->
+    <section class="card">
+      <h2 data-i="history">السجل</h2>
+      <ul id="hist" class="hist"></ul>
+      <div class="actions">
+        <button id="exportBtn" class="btn" data-i="export">تصدير CSV</button>
+        <button id="clearBtn" class="btn ghost" data-i="clear">مسح</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Non-numeric “Get ready” overlay -->
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="bubble">
+      <div class="ready" id="readyText">استعد!</div>
+      <div class="bar"><div class="fill" id="barFill"></div></div>
+    </div>
+  </div>
+
+  <script defer src="app.js"></script>
+</body>
+</html>

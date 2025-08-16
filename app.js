@@ -1,6 +1,4 @@
-// © 2025 Kenzi. All rights reserved.
 (()=>{
-  // iOS double-tap zoom guard
   let lastTouchEnd=0;
   document.addEventListener('touchend', function(e){
     const now=Date.now();
@@ -9,31 +7,28 @@
   }, {passive:false});
 
   const I = { ar: {
-      brand:"🧮 كنزي | تدريب الأباكوس", trainer:"التدريب", worksheet:"ورقة تدريبات",
+      brand:"🧮 كنزي الصوفي | تدريب الأباكوس", trainer:"التدريب", worksheet:"ورقة تدريبات",
       setup:"الإعداد", mode:"العملية", mixed:"+ / − (مخلوط)", digits:"عدد الخانات لكل رقم",
-      strictHelp:"الخانات الصارمة: إذا اخترت ٢ خانتين فستظهر أرقام من 10 إلى 99 فقط.", strictEx:"مثال: 35 − 12 + 47",
       howmany:"عدد الأرقام المعروضة", speed:"السرعة", flash:"مدة ظهور الرقم (ث)", gap:"الفاصل بين الأرقام (ث)",
       flashExplain:"المدة = عرض الرقم، الفاصل = المسافة بين الأرقام.", beep:"صوت عند كل رقم", noneg:"لا مجموع سالب", strict:"خانات صارمة",
       start:"ابدأ", pause:"إيقاف مؤقت", stop:"إيقاف", keys:"اختصارات: مسافة = ابدأ/أوقف • إنتر = إرسال • R = إعادة",
       play:"اللعب", num:"الرقم", elapsed:"الوقت", submit:"إرسال",
-      previous:"السؤال السابق", history:"السجل", export:"تصدير CSV", clear:"مسح",
-      slow:"بطيء", normal:"عادي", fast:"سريع", ready:"استعد!", answer:"الإجابة: ", corner:"عرض سجل الأرقام في الركن",
+      previous:"السؤال السابق", slow:"بطيء", normal:"عادي", fast:"سريع", ready:"استعد!", corner:"عرض سجل الأرقام في الركن",
       wtitle:"مولّد ورقة تدريبات", wcols:"عدد الأعمدة", wrows:"عدد الأرقام بكل عمود", wdigits:"الخانات", wmode:"نوع الإشارات", wgenerate:"توليد ورقة",
       whelp:"كل عمود = سؤال. يوجد حقل لإجابة الطالب + زر 👁 لإظهار الحل لذلك العمود + زر ✓ للتحقق.",
-      title:"🧮 كنزي | تدريب الأباكوس للأطفال (Kenzi Abacus)"
+      correct:"إجابة صحيحة ✓", wrong:"إجابة خاطئة ✗", theAnswer:"الإجابة: "
     },
     en: {
-      brand:"🧮 Kenzi | Abacus Trainer", trainer:"Trainer", worksheet:"Worksheet",
+      brand:"🧮 Kenzi AL-Soufi | Abacus Trainer", trainer:"Trainer", worksheet:"Worksheet",
       setup:"Setup", mode:"Mode", mixed:"Mixed +/-", digits:"Digits per number",
-      strictHelp:"Strict digits: choosing 2 means 10–99 only.", strictEx:"Example: 35 − 12 + 47",
       howmany:"How many numbers", speed:"Speed", flash:"Flash (s)", gap:"Gap (s)",
       flashExplain:"Flash = show time; Gap = time between numbers.", beep:"Beep", noneg:"No negative", strict:"Strict digits",
       start:"Start", pause:"Pause", stop:"Stop", keys:"Shortcuts: Space=start/pause • Enter=submit • R=restart",
       play:"Play", num:"Number", elapsed:"Elapsed", submit:"Submit",
-      previous:"Previous", history:"History", export:"Export", clear:"Clear",
-      slow:"Slow", normal:"Normal", fast:"Fast", ready:"Get ready!", answer:"Answer: ", corner:"Show corner stack",
+      previous:"Previous", slow:"Slow", normal:"Normal", fast:"Fast", ready:"Get ready!", corner:"Show corner stack",
       wtitle:"Worksheet Generator", wcols:"Columns", wrows:"Rows/column", wdigits:"Digits", wmode:"Signs", wgenerate:"Generate",
-      whelp:"Each column is a question. Student answer box, 👁 to reveal, ✓ to check.", title:"🧮 Kenzi | Abacus Trainer (Kids)"
+      whelp:"Each column is a question. Student answer box, 👁 reveal, ✓ check.",
+      correct:"Correct ✓", wrong:"Wrong ✗", theAnswer:"Answer: "
     }
   };
   let lang="ar";
@@ -41,14 +36,13 @@
   const $$ = s=>Array.from(document.querySelectorAll(s));
   function applyI18n(){
     const t=I[lang]; document.documentElement.lang=lang; document.documentElement.dir=(lang==="ar")?"rtl":"ltr";
-    document.title=t.title; $("#brand").textContent=t.brand;
+    document.title="🧮 كنزي الصوفي | تدريب الأباكوس للأطفال (Kenzi Abacus)"; $("#brand").textContent=t.brand;
     $$("[data-i]").forEach(el=>{ const k=el.getAttribute("data-i"); if(t[k]) el.textContent=t[k]; });
-    $("#status").textContent=(lang==="ar")?"جاهز":"Idle"; $("#readyText").textContent=t.ready||"استعد!";
+    $("#status").textContent=(lang==='ar')?'جاهز':'Idle'; $("#readyText").textContent=t.ready||"استعد!";
   }
   $$(".lang .chip").forEach(b=> b.onclick=()=>{ lang=b.dataset.lang; applyI18n(); });
   applyI18n();
 
-  // tabs
   $$(".tab").forEach(tab=>{
     tab.onclick=()=>{
       $$(".tab").forEach(t=>t.classList.remove("active"));
@@ -58,7 +52,6 @@
     };
   });
 
-  // ---- Trainer ----
   const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
   const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
   const fmt=s=>(Math.round(s*10)/10).toFixed(1)+'s';
@@ -132,10 +125,10 @@
     state.running=true; state.paused=false; state.startTs=performance.now();
     $("#display").classList.remove("dim"); $("#displayText").textContent="•";
     $("#idx").textContent="0"; $("#total").textContent=String(state.seq.length);
-    $("#progFill").style.width="0%"; $("#result").style.display="none"; $("#cornerStack").innerHTML="";
+    $("#progFill").style.width="0%"; $("#result").style.display="none"; $("#result").className='resultBanner'; $("#answer").classList.remove('ok','bad'); $("#cornerStack").innerHTML="";
     $("#status").textContent=(lang==='ar')?'يعمل':'Running';
     $("#startBtn").disabled=true; $("#pauseBtn").disabled=false; $("#stopBtn").disabled=false;
-    showOverlay(1000); await sleep(1100);
+    showOverlay(900); await sleep(950);
     const fms=Math.round(parseFloat($("#flashOut").textContent)*1000);
     const gms=Math.round(parseFloat($("#gapOut").textContent)*1000);
     for(let i=0;i<state.seq.length;i++){
@@ -153,6 +146,8 @@
       if(i<state.seq.length-1){ $("#displayText").textContent='•'; await sleep(gms); }
     }
     $("#progFill").style.width='100%'; $("#displayText").textContent='=?';
+    $("#startBtn").disabled=false; $("#pauseBtn").disabled=true; $("#stopBtn").disabled=true;
+    $("#status").textContent=(lang==='ar')?'أجب ثم ابدأ من جديد':'Answer or start again';
   }
 
   function stop(reset=true){
@@ -176,13 +171,23 @@
 
   function submit(e){
     if(e) e.preventDefault();
-    const raw=($("#answer").value||'').trim(); if(raw==='') return;
+    const raw=($("#answer").value||'').trim();
+    if(raw===''){
+      $("#result").style.display='inline-block';
+      $("#result").className='resultBanner bad';
+      $("#result").textContent=I[lang].theAnswer + String(state.answer);
+      $("#answer").classList.remove('ok'); $("#answer").classList.add('bad');
+      $("#startBtn").disabled=false; $("#pauseBtn").disabled=true; $("#stopBtn").disabled=true;
+      return;
+    }
     const guess=Number(raw.replace(/[,\s_]/g,''));
     const ok=(guess===state.answer);
     seqToBubbles(state.seq);
-    $("#prevAns").textContent=(lang==='ar'?'الإجابة: ':'Answer: ')+state.answer;
+    $("#prevAns").textContent=I[lang].theAnswer + state.answer;
     $("#result").style.display='inline-block';
-    $("#result").textContent= ok ? (lang==='ar'?'صحيح!':'Correct!') : (lang==='ar'?'الإجابة: ':'Answer: ')+state.answer;
+    $("#result").className='resultBanner ' + (ok?'ok':'bad');
+    $("#result").textContent = ok ? I[lang].correct : (I[lang].wrong + ' — ' + I[lang].theAnswer + state.answer);
+    $("#answer").classList.remove('ok','bad'); $("#answer").classList.add(ok?'ok':'bad');
     $("#startBtn").disabled=false; $("#pauseBtn").disabled=true; $("#stopBtn").disabled=true;
   }
 
@@ -210,10 +215,10 @@
     const t=e.target.textContent;
     if(t==="←"){ $("#answer").value=$("#answer").value.slice(0,-1); return; }
     if(t==="✖"){ $("#answer").value=""; return; }
-    if(/\d/.test(t)) $("#answer").value+=$.escape?$.escape(t):t;
+    if(/\d/.test(t)) $("#answer").value += t;
   });
 
-  // ---- Worksheet (unchanged core, with mobile grid tweak in CSS) ----
+  // Worksheet
   let wCols=10, wRows=5, wDigits=2, wMode='mix';
   const wColsOut=$("#wColsOut"), wRowsOut=$("#wRowsOut"), wDigitsOut=$("#wDigitsOut");
   const clampN=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));

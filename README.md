@@ -1,4 +1,5 @@
-# Kenzi | Abacus Trainer (Kids) — v11
-- Default = Trainer; bigger brand
-- Worksheet: per‑column 👁 reveal, ✓ check, student answer input; global **Check all**; clear Student/With‑answers print
-- Mobile anti‑zoom kept; bigger display
+# Kenzi | Abacus Trainer (Kids) — v12
+- CSS tabs: only one screen visible at a time (works even if JS fails)
+- Worksheet: per‑column 👁 reveal, ✓ check, student answer input; **Check all** works without regen; *no print buttons*
+- Bigger brand/logo and sheet title
+- Mobile anti‑zoom + bigger play display

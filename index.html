@@ -25,7 +25,38 @@
   </header>
 
   <main class="layout" data-screen="trainer">
-    <!-- TRAINER (unchanged UI, big display) -->
+    <!-- TRAINER -->
+    <section class="card t prev">
+      <h2 data-i="previous">السؤال السابق</h2>
+      <div id="prevSeq" class="seq"></div>
+      <div class="small muted" id="prevAns"></div>
+    </section>
+
+    <section class="card t play">
+      <h2 data-i="play">اللعب</h2>
+      <div class="display dim big" id="display">
+        <span id="displayText">—</span>
+        <div id="cornerStack" class="cornerStack"></div>
+      </div>
+      <div class="prog"><div class="progFill" id="progFill"></div></div>
+      <div class="row wrap">
+        <div><span data-i="num">الرقم</span>: <b id="idx">0</b>/<span id="total">0</span></div>
+        <div class="spacer"></div>
+        <div><span data-i="elapsed">الوقت</span>: <b id="elapsed">0.0s</b></div>
+      </div>
+      <div class="answer" id="answerWrap" style="display:flex">
+        <input id="answer" type="text" inputmode="none" placeholder="..." />
+        <button id="submitBtn" class="btn primary" data-i="submit">إرسال</button>
+        <span id="result" class="pill" style="display:none"></span>
+      </div>
+      <div class="keypad" id="keypad">
+        <button>7</button><button>8</button><button>9</button>
+        <button>4</button><button>5</button><button>6</button>
+        <button>1</button><button>2</button><button>3</button>
+        <button>0</button><button>←</button><button>✖</button>
+      </div>
+    </section>
+
     <section class="card t controls">
       <h2 data-i="setup">الإعداد</h2>
       <div class="group">
@@ -52,9 +83,7 @@
           </div>
         </div>
         <div class="help" data-i="strictHelp">
-          <b>الخانات الصارمة</b>: إذا اخترت ٢ خانتين فستظهر أرقام من <b>10 إلى 99</b> فقط.
-          في الطرح نمنع الناتج السالب باستبدال الخطوة بجمع عند الحاجة.
-          <div class="example" data-i="strictEx">مثال: 35 − 12 + 47</div>
+          <b>الخانات الصارمة</b>: إذا اخترت ٢ خانتين فستظهر أرقام من <b>10 إلى 99</b> فقط. في الطرح نمنع الناتج السالب باستبدال الخطوة بجمع عند الحاجة.
         </div>
       </div>
       <div class="group">
@@ -113,47 +142,15 @@
       <div class="hint" data-i="keys">اختصارات: مسافة = ابدأ/أوقف • إنتر = إرسال • R = إعادة</div>
     </section>
 
-    <section class="card t play">
-      <h2 data-i="play">اللعب</h2>
-      <div class="display dim big" id="display">
-        <span id="displayText">—</span>
-        <div id="cornerStack" class="cornerStack"></div>
-      </div>
-      <div class="prog"><div class="progFill" id="progFill"></div></div>
-      <div class="row wrap">
-        <div><span data-i="num">الرقم</span>: <b id="idx">0</b>/<span id="total">0</span></div>
-        <div class="spacer"></div>
-        <div><span data-i="elapsed">الوقت</span>: <b id="elapsed">0.0s</b></div>
-      </div>
-      <div class="answer" id="answerWrap" style="display:flex">
-        <input id="answer" type="text" inputmode="none" placeholder="..." />
-        <button id="submitBtn" class="btn primary" data-i="submit">إرسال</button>
-        <span id="result" class="pill" style="display:none"></span>
-      </div>
-      <div class="keypad" id="keypad">
-        <button>7</button><button>8</button><button>9</button>
-        <button>4</button><button>5</button><button>6</button>
-        <button>1</button><button>2</button><button>3</button>
-        <button>0</button><button>←</button><button>✖</button>
-      </div>
-    </section>
-
-    <section class="card t prev">
-      <h2 data-i="previous">السؤال السابق</h2>
-      <div id="prevSeq" class="seq"></div>
-      <div class="small muted" id="prevAns"></div>
-    </section>
-
-    <section class="card t history">
-      <h2 data-i="history">السجل</h2>
-      <ul id="hist" class="hist"></ul>
-      <div class="actions">
-        <button id="exportBtn" class="btn" data-i="export">تصدير CSV</button>
-        <button id="clearBtn" class="btn ghost" data-i="clear">مسح</button>
-      </div>
-    </section>
-
     <!-- WORKSHEET -->
+    <section class="card w sheetWrap">
+      <div class="sheetHead">
+        <div class="sheetBrand">🧮 Kenzi | كنزي</div>
+        <div class="sheetMeta" id="sheetMeta"></div>
+      </div>
+      <div id="sheet" class="sheetGrid"></div>
+    </section>
+
     <section class="card w controls">
       <h2 data-i="wtitle">مولّد ورقة تدريبات</h2>
       <div class="row wrap">
@@ -192,19 +189,9 @@
       </div>
       <div class="actions">
         <button id="genSheet" class="btn primary" data-i="wgenerate">توليد ورقة</button>
-        <button id="printStudent" class="btn">طباعة (طالب)</button>
-        <button id="printAnswers" class="btn">طباعة (مع الحل)</button>
         <button id="checkAll" class="btn">تحقق من جميع الإجابات</button>
       </div>
-      <div class="help" data-i="whelp">كل عمود = سؤال واحد. أسفل رقم كل عمود: خانة لإجابة الطالب + زر 👁 لإظهار الحل لذلك العمود فقط + زر ✓ للتحقق.</div>
-    </section>
-
-    <section class="card w sheet">
-      <div class="sheetHead">
-        <div class="sheetBrand">🧮 Kenzi | كنزي</div>
-        <div class="sheetMeta" id="sheetMeta"></div>
-      </div>
-      <div id="sheet" class="sheetGrid"></div>
+      <div class="help" data-i="whelp">كل عمود = سؤال واحد. أسفل رقم العمود: حقل لإجابة الطالب + زر 👁 لإظهار الحل لذلك العمود فقط + زر ✓ للتحقق.</div>
     </section>
   </main>
 

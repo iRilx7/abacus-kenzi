@@ -48,20 +48,16 @@
   $$(".lang .chip").forEach(b=> b.onclick=()=>{ lang=b.dataset.lang; applyI18n(); });
   applyI18n();
 
-  // tab switching
+  // tabs -> switch data-screen (CSS handles visibility)
   $$(".tab").forEach(tab=>{
     tab.onclick=()=>{
       $$(".tab").forEach(t=>t.classList.remove("active"));
       tab.classList.add("active");
-      const scr=tab.dataset.tab;
-      document.querySelector("main.layout").setAttribute("data-screen", scr);
-      $$(".card.t").forEach(c=> c.style.display=(scr==="trainer")?"block":"none");
-      $$(".card.w").forEach(c=> c.style.display=(scr==="worksheet")?"block":"none");
+      document.querySelector("main.layout").setAttribute("data-screen", tab.dataset.tab);
     };
   });
-  $$(".card.w").forEach(c=> c.style.display="none"); // default trainer
 
-  // === Trainer (same as v10 but trimmed here for brevity) ===
+  // ---- Trainer ---- (same logic as previous versions)
   const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
   const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
   const fmt=s=>(Math.round(s*10)/10).toFixed(1)+'s';
@@ -102,8 +98,9 @@
   function submit(e){ if(e) e.preventDefault(); const raw=($("#answer").value||'').trim(); if(raw==='') return; const guess=Number(raw.replace(/[,\s_]/g,'')); const ok=(guess===state.answer); seqToBubbles(state.seq); $("#prevAns").textContent=(lang==='ar'?'الإجابة: ':'Answer: ')+state.answer; $("#result").style.display='inline-block'; $("#result").textContent= ok ? (lang==='ar'?'صحيح!':'Correct!') : (lang==='ar'?'الإجابة: ':'Answer: ')+state.answer; $("#startBtn").disabled=false; $("#pauseBtn").disabled=true; $("#stopBtn").disabled=true; }
   $("#startBtn").onclick=()=>{ stop(false); run(); }; $("#pauseBtn").onclick=()=>{ if(!state.running) return; state.paused=!state.paused; $("#pauseBtn").textContent=state.paused?(lang==='ar'?'ابدأ':'Start'):(lang==='ar'?'إيقاف مؤقت':'Pause'); $("#status").textContent=state.paused?(lang==='ar'?'متوقف':'Paused'):(lang==='ar'?'يعمل':'Running'); }; $("#stopBtn").onclick=()=> stop(); $("#submitBtn").onclick=(e)=>submit(e);
   if(!isTouch){ $("#answer").addEventListener('keydown', e=>{ if(e.key==='Enter') submit(e); }); document.addEventListener('keydown', e=>{ if(e.target && ['INPUT','TEXTAREA'].includes(e.target.tagName)) return; if(e.code==='Space'){ e.preventDefault(); if(!state.running){ stop(false); run(); } else { $("#pauseBtn").click(); } } if(e.key.toLowerCase()==='r'){ stop(false); run(); } }); }
+  $("#keypad").addEventListener("click", e=>{ if(e.target.tagName!=="BUTTON") return; const t=e.target.textContent; if(t==="←"){ $("#answer").value=$("#answer").value.slice(0,-1); return; } if(t==="✖"){ $("#answer").value=""; return; } if(/\d/.test(t)) $("#answer").value+=$.escape?$.escape(t):t; });
 
-  // === Worksheet ===
+  // ---- Worksheet ----
   let wCols=10, wRows=5, wDigits=2, wMode='mix';
   const wColsOut=$("#wColsOut"), wRowsOut=$("#wRowsOut"), wDigitsOut=$("#wDigitsOut");
   const clampN=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
@@ -115,8 +112,7 @@
   $("#wDigitsPlus").onclick =()=>{ wDigits=clampN(wDigits+1,1,3); wDigitsOut.textContent=wDigits; };
   $("#wModeTiles").addEventListener('click', e=>{ if(!e.target.classList.contains('tile')) return; wMode=e.target.dataset.val; $$("#wModeTiles .tile").forEach(x=>x.classList.remove('active')); e.target.classList.add('active'); });
 
-  function ri(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-  function riDigits(d){ const a=Math.pow(10,d-1), b=Math.pow(10,d)-1; return ri(a,b); }
+  function riDigits(d){ const a=Math.pow(10,d-1), b=Math.pow(10,d)-1; return Math.floor(Math.random()*(b-a+1))+a; }
   function signPick(){ return wMode==='add'?'+': wMode==='sub'?'-': (Math.random()<0.5?'+':'-'); }
 
   function buildCol(index){
@@ -139,8 +135,7 @@
       col.appendChild(line);
     }
     const a=document.createElement('div'); a.className='ans'; a.textContent=(lang==='ar'?'الإجابة: ':'Ans: ')+String(sum);
-    a.style.display='none'; // hidden by default
-    col.dataset.sum=String(sum);
+    a.style.display='none'; col.dataset.sum=String(sum);
     col.appendChild(a);
 
     reveal.addEventListener('click', ()=>{ a.style.display = (a.style.display==='none')?'block':'none'; });
@@ -163,16 +158,7 @@
       if(!isNaN(v)) col.classList.add(v===sum?'correct':'wrong');
     });
   };
-  $("#printStudent").onclick=()=>{
-    const olds=[...$$('.sheetCol .ans')].map(a=>a.style.display);
-    $$('.sheetCol .ans').forEach(a=>a.style.display='none'); window.print();
-    $$('.sheetCol .ans').forEach((a,i)=>a.style.display=olds[i]);
-  };
-  $("#printAnswers").onclick=()=>{
-    const olds=[...$$('.sheetCol .ans')].map(a=>a.style.display);
-    $$('.sheetCol .ans').forEach(a=>a.style.display='block'); window.print();
-    $$('.sheetCol .ans').forEach((a,i)=>a.style.display=olds[i]);
-  };
 
+  // Create initial starter sheet so the tab shows content
   makeSheet();
 })();

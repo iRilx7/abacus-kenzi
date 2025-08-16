@@ -7,7 +7,7 @@
   }, {passive:false});
 
   const I = { ar: {
-      brand:"🧮 كنزي | تدريب الأباكوس", trainer:"التدريب", worksheet:"ورقة تدريبات",
+      brand:"🧮 كنزي الصوفي | تدريب العداد الصيني", trainer:"التدريب", worksheet:"ورقة تدريبات",
       setup:"الإعداد", mode:"العملية", mixed:"+ / − (مخلوط)", digits:"عدد الخانات لكل رقم",
       howmany:"عدد الأرقام المعروضة", speed:"السرعة", flash:"مدة ظهور الرقم (ث)", gap:"الفاصل بين الأرقام (ث)",
       flashExplain:"المدة = عرض الرقم، الفاصل = المسافة بين الأرقام.", beep:"صوت عند كل رقم", noneg:"لا مجموع سالب", strict:"خانات صارمة",
@@ -19,7 +19,7 @@
       correct:"إجابة صحيحة ✓", wrong:"إجابة خاطئة ✗", theAnswer:"الإجابة: "
     },
     en: {
-      brand:"🧮 Kenzi | Abacus Trainer", trainer:"Trainer", worksheet:"Worksheet",
+      brand:"🧮 Kenzi AL-Soufi | Abacus Trainer", trainer:"Trainer", worksheet:"Worksheet",
       setup:"Setup", mode:"Mode", mixed:"Mixed +/-", digits:"Digits per number",
       howmany:"How many numbers", speed:"Speed", flash:"Flash (s)", gap:"Gap (s)",
       flashExplain:"Flash = show time; Gap = time between numbers.", beep:"Beep", noneg:"No negative", strict:"Strict digits",
@@ -36,7 +36,7 @@
   const $$ = s=>Array.from(document.querySelectorAll(s));
   function applyI18n(){
     const t=I[lang]; document.documentElement.lang=lang; document.documentElement.dir=(lang==="ar")?"rtl":"ltr";
-    document.title="🧮 كنزي | تدريب الأباكوس للأطفال (Kenzi Abacus)"; $("#brand").textContent=t.brand;
+    document.title="🧮 كنزي الصوفي | تدريب العداد الصيني للأطفال (Kenzi AL-Soufi Abacus)"; $("#brand").textContent=t.brand;
     $$("[data-i]").forEach(el=>{ const k=el.getAttribute("data-i"); if(t[k]) el.textContent=t[k]; });
     $("#status").textContent=(lang==='ar')?'جاهز':'Idle'; $("#readyText").textContent=t.ready||"استعد!";
   }

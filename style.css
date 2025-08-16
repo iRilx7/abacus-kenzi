@@ -4,17 +4,15 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-/* prevent iOS zoom and double-tap zoom */
 input,button,select,textarea{font-size:18px;}
 html{-webkit-text-size-adjust:100%;}
 button{touch-action:manipulation;}
-
 body{margin:0;background:radial-gradient(800px 300px at 50% -5%, #fff0e9, transparent 60%), var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Inter,Roboto,Arial}
-.top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
 .brand{font-weight:900;font-size:1.2rem}
 .pill{padding:4px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);font-weight:800}
-.layout{max-width:1100px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:340px 1fr 1fr;gap:14px}
-@media (max-width:1000px){.layout{grid-template-columns:1fr}}
+.layout{max-width:1200px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:340px 1fr 1fr;gap:14px}
+@media (max-width:1100px){.layout{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
 h2{margin:0 0 10px}
 .group{margin:10px 0}
@@ -37,16 +35,23 @@ h2{margin:0 0 10px}
 .chip{cursor:pointer;border:2px dashed var(--border);border-radius:999px;background:#fff;color:var(--text);padding:6px 10px;font-weight:800}
 .toggles{display:flex;gap:14px;flex-wrap:wrap}
 .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.tabs{display:flex;gap:6px}
+.tab{border:2px solid var(--border);background:#fff;border-radius:999px;padding:6px 10px;font-weight:800;cursor:pointer}
+.tab.active{border-color:var(--pri1)}
+
 .display{
+  position:relative;
   display:flex;align-items:center;justify-content:center;min-height:260px;border-radius:16px;
   font-weight:900;font-size:84px;letter-spacing:1px;user-select:none;background:white;border:2px dashed var(--border)
 }
+#displayText{pointer-events:none}
 @media (max-width:520px){.display{min-height:200px;font-size:60px}}
 .dim{opacity:.4}
-/* corner last number */
-.lastCorner{margin-top:6px;display:inline-flex;gap:8px;align-items:center}
-.lastCorner .label{color:var(--muted);font-weight:800;font-size:.9rem}
-.bubble.small{padding:4px 8px;border-radius:999px;background:#fff;border:2px solid var(--border);font-weight:800}
+.cornerStack{
+  position:absolute; top:10px; inset-inline-end:10px;
+  display:flex; flex-direction:column; gap:6px; align-items:flex-end; max-height:85%; overflow:auto;
+}
+.cornerStack .bubble{padding:4px 8px;border-radius:999px;background:#fff;border:2px solid var(--border);font-weight:800;font-size:.9rem;opacity:.9}
 
 .prog{height:10px;border-radius:999px;background:#f1f3f9;border:2px solid var(--border);overflow:hidden;margin-top:8px}
 .progFill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#9eecff)}
@@ -62,9 +67,22 @@ h2{margin:0 0 10px}
 .lang{display:flex;gap:8px}
 .lang .chip{border:2px solid var(--border);background:#fff;padding:6px 10px;border-radius:999px;font-weight:800;cursor:pointer}
 
-/* “Get ready” overlay (no numbers) */
 .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.15);backdrop-filter:blur(2px);z-index:999}
 .overlay .bubble{width:260px;border-radius:18px;background:#fff;padding:18px;border:2px solid var(--border);text-align:center}
 .ready{font-weight:900;font-size:1.4rem;margin-bottom:10px}
 .bar{height:12px;border-radius:999px;background:#f1f3f9;border:2px solid var(--border);overflow:hidden}
 .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#9eecff)}
+
+.sheetHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sheetBrand{font-weight:900}
+.sheetGrid{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
+.sheetCol{border:2px solid var(--border);border-radius:12px;padding:8px;background:#fff;min-height:160px}
+.sheetCol h4{margin:0 0 6px;font-weight:900;text-align:center}
+.sheetCol .line{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-weight:900;text-align:center;padding:4px 0;border-bottom:1px dashed #eaeef6}
+@media print{
+  body{background:white}
+  .top, .tabs, .controls.t, .t.history, .t.prev, .t.play, .foot{display:none}
+  .layout{grid-template-columns:1fr}
+  .w.controls{page-break-before:always}
+}
+.foot{max-width:1200px;margin:0 auto;padding:16px;color:var(--muted);font-size:.9rem}

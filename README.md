@@ -1,10 +1,10 @@
-# Kenzi | Abacus Trainer (Kids) — v4
-Arabic-first, touch-friendly abacus/anzan trainer. Branding includes **Kenzi / كنزي**.
+# Kenzi | Abacus Trainer (Kids) — v8
+Arabic-first, touch-friendly trainer + worksheet generator.
 
-Fixes in this build:
-- Phone keyboard never opens (readonly + inputmode=none on touch devices)
-- Corner "last number" bubble updates after each flash and stays visible
-- Flash/Gap configurable up to 5s
-- Mobile zoom prevention and kid-friendly UI
+**New:**
+- Enter submit never zooms on phones (preventDefault + blur).
+- Corner **stack** keeps every previous number (vertical list) — default ON, toggleable.
+- **Worksheet mode** (printable): columns like your sample photo. Pick columns, rows, digits, and +/- style.
+- Footer copyright + LICENSE (All Rights Reserved).
 
-Deploy via GitHub Pages: upload all files → Settings → Pages → main /(root).
+Deploy: upload files to the repo root and enable GitHub Pages (main /(root)).

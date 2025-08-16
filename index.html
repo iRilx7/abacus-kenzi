@@ -2,15 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>🧮 كنزي | تدريب الأباكوس للأطفال (Kenzi Abacus)</title>
   <link rel="icon" href="favicon.svg">
   <link rel="stylesheet" href="style.css">
+  <!-- © 2025 Kenzi. All rights reserved. See LICENSE. -->
 </head>
 <body>
   <header class="top">
     <div class="brand" id="brand">🧮 كنزي | تدريب الأباكوس</div>
     <div class="right">
+      <nav class="tabs">
+        <button class="tab active" data-tab="trainer">🎬 <span data-i="trainer">التدريب</span></button>
+        <button class="tab" data-tab="worksheet">🧾 <span data-i="worksheet">ورقة تدريبات</span></button>
+      </nav>
       <div class="lang">
         <button class="chip" data-lang="ar">العربية</button>
         <button class="chip" data-lang="en">English</button>
@@ -19,9 +24,9 @@
     </div>
   </header>
 
-  <main class="layout">
-    <!-- Controls -->
-    <section class="card">
+  <main class="layout" data-screen="trainer">
+    <!-- ============== TRAINER ============== -->
+    <section class="card t controls">
       <h2 data-i="setup">الإعداد</h2>
 
       <div class="group">
@@ -105,6 +110,7 @@
         <label><input id="beep" type="checkbox" checked> <span data-i="beep">صوت عند كل رقم</span></label>
         <label><input id="noNegative" type="checkbox" checked> <span data-i="noneg">لا مجموع سالب</span></label>
         <label><input id="strictDigits" type="checkbox" checked> <span data-i="strict">خانات صارمة</span></label>
+        <label><input id="cornerToggle" type="checkbox" checked> <span data-i="corner">عرض سجل الأرقام في الركن</span></label>
       </div>
 
       <div class="actions">
@@ -115,16 +121,13 @@
       <div class="hint" data-i="keys">اختصارات: مسافة = ابدأ/أوقف • إنتر = إرسال • R = إعادة</div>
     </section>
 
-    <!-- Play -->
-    <section class="card">
+    <section class="card t play">
       <h2 data-i="play">اللعب</h2>
 
-      <div class="display dim" id="display">—</div>
-
-      <!-- Always-on corner "last number" bubble -->
-      <div class="lastCorner">
-        <span class="label" data-i="last">السابق</span>
-        <span id="lastBubble" class="bubble small">—</span>
+      <div class="display dim" id="display">
+        <span id="displayText">—</span>
+        <!-- Corner stack list -->
+        <div id="cornerStack" class="cornerStack"></div>
       </div>
 
       <div class="prog"><div class="progFill" id="progFill"></div></div>
@@ -136,7 +139,6 @@
       </div>
 
       <div class="answer" id="answerWrap" style="display:flex">
-        <!-- On touch devices we set readonly + inputmode=none to block phone keyboard -->
         <input id="answer" type="text" inputmode="none" placeholder="..." />
         <button id="submitBtn" class="btn primary" data-i="submit">إرسال</button>
         <span id="result" class="pill" style="display:none"></span>
@@ -150,21 +152,71 @@
       </div>
     </section>
 
-    <!-- Previous sequence -->
-    <section class="card">
+    <section class="card t prev">
       <h2 data-i="previous">السؤال السابق</h2>
       <div id="prevSeq" class="seq"></div>
       <div class="small muted" id="prevAns"></div>
     </section>
 
-    <!-- History -->
-    <section class="card">
+    <section class="card t history">
       <h2 data-i="history">السجل</h2>
       <ul id="hist" class="hist"></ul>
       <div class="actions">
         <button id="exportBtn" class="btn" data-i="export">تصدير CSV</button>
         <button id="clearBtn" class="btn ghost" data-i="clear">مسح</button>
       </div>
+    </section>
+
+    <!-- ============== WORKSHEET ============== -->
+    <section class="card w controls">
+      <h2 data-i="wtitle">مولّد ورقة تدريبات</h2>
+      <div class="row wrap">
+        <div class="mini">
+          <div class="label" data-i="wcols">عدد الأعمدة</div>
+          <div class="stepper">
+            <button id="wColsMinus" class="btn sm">−</button>
+            <div class="num" id="wColsOut">10</div>
+            <button id="wColsPlus" class="btn sm">+</button>
+          </div>
+        </div>
+        <div class="mini">
+          <div class="label" data-i="wrows">عدد الأرقام بكل عمود</div>
+          <div class="stepper">
+            <button id="wRowsMinus" class="btn sm">−</button>
+            <div class="num" id="wRowsOut">5</div>
+            <button id="wRowsPlus" class="btn sm">+</button>
+          </div>
+        </div>
+        <div class="mini">
+          <div class="label" data-i="wdigits">الخانات</div>
+          <div class="stepper">
+            <button id="wDigitsMinus" class="btn sm">−</button>
+            <div class="num" id="wDigitsOut">2</div>
+            <button id="wDigitsPlus" class="btn sm">+</button>
+          </div>
+        </div>
+        <div class="mini">
+          <div class="label" data-i="wmode">نوع الإشارات</div>
+          <div class="tiles" id="wModeTiles">
+            <button data-val="add" class="tile">+</button>
+            <button data-val="sub" class="tile">−</button>
+            <button data-val="mix" class="tile active" data-i="mixed">+ / −</button>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="genSheet" class="btn primary" data-i="wgenerate">توليد ورقة</button>
+        <button id="printSheet" class="btn" data-i="wprint">طباعة</button>
+      </div>
+      <div class="help" data-i="whelp">الورقة تشبه أسلوب تدريب الأطفال: أرقام تحت بعضها بإشارات +/−.</div>
+    </section>
+
+    <section class="card w sheet">
+      <div class="sheetHead">
+        <div class="sheetBrand">🧮 Kenzi | كنزي</div>
+        <div class="sheetMeta" id="sheetMeta"></div>
+      </div>
+      <div id="sheet" class="sheetGrid"></div>
     </section>
   </main>
 
@@ -175,6 +227,10 @@
       <div class="bar"><div class="fill" id="barFill"></div></div>
     </div>
   </div>
+
+  <footer class="foot">
+    <span>© 2025 Kenzi — All Rights Reserved.</span>
+  </footer>
 
   <script defer src="app.js"></script>
 </body>

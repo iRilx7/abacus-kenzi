@@ -4,11 +4,11 @@
 }
 *{box-sizing:border-box; touch-action: manipulation;}
 html,body{height:100%; -webkit-text-size-adjust:100%;}
-input,button,select,textarea{font-size:16px;} /* >=16px stops iOS zoom */
+input,button,select,textarea{font-size:16px;}
 body{margin:0;background:radial-gradient(800px 300px at 50% -5%, #fff0e9, transparent 60%), var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Inter,Roboto,Arial}
-.top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
-.brand{font-weight:900;font-size:1.2rem}
-.pill{padding:4px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);font-weight:800}
+.top{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.brand{font-weight:900;font-size:1.5rem} /* bigger logo text */
+.pill{padding:6px 12px;border-radius:999px;background:#fff;border:1px solid var(--border);font-weight:800}
 .layout{max-width:1200px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:340px 1fr 1fr;gap:14px}
 @media (max-width:1100px){.layout{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -39,12 +39,11 @@ h2{margin:0 0 10px}
 
 .display{
   position:relative;
-  display:flex;align-items:center;justify-content:center;min-height:320px;border-radius:16px;
-  font-weight:900;font-size:96px;letter-spacing:1px;user-select:none;background:white;border:2px dashed var(--border)
+  display:flex;align-items:center;justify-content:center;min-height:340px;border-radius:16px;
+  font-weight:900;font-size:110px;letter-spacing:1px;user-select:none;background:white;border:2px dashed var(--border)
 }
-.display.big{min-height:360px;font-size:110px}
 #displayText{pointer-events:none}
-@media (max-width:520px){.display{min-height:280px;font-size:92px} .display.big{min-height:300px;font-size:100px}}
+@media (max-width:520px){.display{min-height:300px;font-size:104px}}
 .dim{opacity:.4}
 .cornerStack{
   position:absolute; top:10px; inset-inline-end:10px;
@@ -73,11 +72,13 @@ h2{margin:0 0 10px}
 .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#9eecff)}
 
 .sheetHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.sheetBrand{font-weight:900}
+.sheetBrand{font-weight:900;font-size:1.3rem} /* bigger */
 .sheetGrid{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
-.sheetCol{border:2px solid var(--border);border-radius:12px;padding:8px;background:#fff;min-height:180px;position:relative}
+.sheetCol{border:2px solid var(--border);border-radius:12px;padding:8px;background:#fff;min-height:200px;position:relative}
 .sheetCol h4{margin:0;font-weight:900;text-align:center;font-size:1rem}
 .sheetCol .divider{height:8px;border-bottom:2px dashed var(--border);margin:4px 0 6px 0}
+.sheetCol .controls{display:flex;gap:6px;margin-bottom:6px;justify-content:center}
+.icn{border:2px solid var(--border);background:#fff;border-radius:10px;padding:4px 8px;font-weight:900;cursor:pointer}
 .sheetCol .ansInput{width:100%;border:2px solid var(--border);border-radius:10px;padding:6px 8px;font-weight:900;text-align:center;margin:4px 0 6px 0}
 .sheetCol .line{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-weight:900;text-align:center;padding:4px 0;border-bottom:1px dashed #eaeef6}
 .sheetCol .ans{margin-top:6px;text-align:center;font-weight:900;color:#1b7a3c}

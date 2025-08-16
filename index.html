@@ -6,7 +6,7 @@
   <title>🧮 كنزي | تدريب الأباكوس للأطفال (Kenzi Abacus)</title>
   <link rel="icon" href="favicon.svg">
   <link rel="stylesheet" href="style.css">
-  <!-- © 2025 Kenzi. All rights reserved. Unauthorised copying/modification is prohibited. See LICENSE. -->
+  <!-- © 2025 Kenzi. All rights reserved. See LICENSE. -->
 </head>
 <body>
   <header class="top">
@@ -25,10 +25,9 @@
   </header>
 
   <main class="layout" data-screen="trainer">
-    <!-- ============== TRAINER ============== -->
+    <!-- TRAINER (unchanged UI, big display) -->
     <section class="card t controls">
       <h2 data-i="setup">الإعداد</h2>
-
       <div class="group">
         <div class="label" data-i="mode">العملية</div>
         <div class="tiles" id="modeTiles">
@@ -38,7 +37,6 @@
           <button data-val="mul" class="tile">×</button>
         </div>
       </div>
-
       <div class="group">
         <div class="label" data-i="digits">عدد الخانات لكل رقم</div>
         <div class="row">
@@ -54,12 +52,11 @@
           </div>
         </div>
         <div class="help" data-i="strictHelp">
-          <b>الخانات الصارمة</b>: إذا اخترت ٢ خانتين فستظهر أرقام من <b>10 إلى 99</b> فقط (لن تظهر 1-خانة مثل 7).
-          في الطرح نلتزم بالخانتين ونمنع الناتج السالب بتبديل تلك الخطوة إلى جمع عند الحاجة.
-          <div class="example" data-i="strictEx">مثال: 35 − 12 + 47 (كل رقم من خانتين)</div>
+          <b>الخانات الصارمة</b>: إذا اخترت ٢ خانتين فستظهر أرقام من <b>10 إلى 99</b> فقط.
+          في الطرح نمنع الناتج السالب باستبدال الخطوة بجمع عند الحاجة.
+          <div class="example" data-i="strictEx">مثال: 35 − 12 + 47</div>
         </div>
       </div>
-
       <div class="group">
         <div class="label" data-i="howmany">عدد الأرقام المعروضة</div>
         <div class="row">
@@ -75,7 +72,6 @@
           </div>
         </div>
       </div>
-
       <div class="group">
         <div class="label" data-i="speed">السرعة</div>
         <div class="row wrap">
@@ -101,18 +97,14 @@
             <button class="chip" data-flash="0.4" data-gap="0.1" data-i="fast">سريع</button>
           </div>
         </div>
-        <div class="help" data-i="flashExplain">
-          <b>المدة</b> = زمن عرض كل رقم. <b>الفاصل</b> = زمن الصمت بين رقمٍ وآخر.
-        </div>
+        <div class="help" data-i="flashExplain">المدة = عرض الرقم، الفاصل = المسافة بين الأرقام.</div>
       </div>
-
       <div class="group toggles">
         <label><input id="beep" type="checkbox" checked> <span data-i="beep">صوت عند كل رقم</span></label>
         <label><input id="noNegative" type="checkbox" checked> <span data-i="noneg">لا مجموع سالب</span></label>
         <label><input id="strictDigits" type="checkbox" checked> <span data-i="strict">خانات صارمة</span></label>
         <label><input id="cornerToggle" type="checkbox" checked> <span data-i="corner">عرض سجل الأرقام في الركن</span></label>
       </div>
-
       <div class="actions">
         <button id="startBtn" class="btn primary big" data-i="start">ابدأ</button>
         <button id="pauseBtn" class="btn" disabled data-i="pause">إيقاف مؤقت</button>
@@ -123,26 +115,21 @@
 
     <section class="card t play">
       <h2 data-i="play">اللعب</h2>
-
       <div class="display dim big" id="display">
         <span id="displayText">—</span>
         <div id="cornerStack" class="cornerStack"></div>
       </div>
-
       <div class="prog"><div class="progFill" id="progFill"></div></div>
-
       <div class="row wrap">
         <div><span data-i="num">الرقم</span>: <b id="idx">0</b>/<span id="total">0</span></div>
         <div class="spacer"></div>
         <div><span data-i="elapsed">الوقت</span>: <b id="elapsed">0.0s</b></div>
       </div>
-
       <div class="answer" id="answerWrap" style="display:flex">
         <input id="answer" type="text" inputmode="none" placeholder="..." />
         <button id="submitBtn" class="btn primary" data-i="submit">إرسال</button>
         <span id="result" class="pill" style="display:none"></span>
       </div>
-
       <div class="keypad" id="keypad">
         <button>7</button><button>8</button><button>9</button>
         <button>4</button><button>5</button><button>6</button>
@@ -166,7 +153,7 @@
       </div>
     </section>
 
-    <!-- ============== WORKSHEET ============== -->
+    <!-- WORKSHEET -->
     <section class="card w controls">
       <h2 data-i="wtitle">مولّد ورقة تدريبات</h2>
       <div class="row wrap">
@@ -203,16 +190,13 @@
           </div>
         </div>
       </div>
-      <div class="toggles">
-        <label><input id="wShowAns" type="checkbox"> <span data-i="wshowans">إظهار الإجابة لكل عمود</span></label>
-      </div>
       <div class="actions">
         <button id="genSheet" class="btn primary" data-i="wgenerate">توليد ورقة</button>
-        <button id="printStudent" class="btn" data-i="wprint">طباعة (طالب)</button>
-        <button id="printAnswers" class="btn" data-i="wprint">طباعة (مع الحل)</button>
+        <button id="printStudent" class="btn">طباعة (طالب)</button>
+        <button id="printAnswers" class="btn">طباعة (مع الحل)</button>
         <button id="checkAll" class="btn">تحقق من جميع الإجابات</button>
       </div>
-      <div class="help" data-i="whelp">ورقة تشبه أسلوب تدريب الأطفال: أرقام تحت بعضها بإشارات +/−. خط واضح تحت رقم العمود. أضفنا خانة لإجابة الطالب تحت كل عمود وإظهار الإجابة الصحيحة مباشرةً عند الطلب.</div>
+      <div class="help" data-i="whelp">كل عمود = سؤال واحد. أسفل رقم كل عمود: خانة لإجابة الطالب + زر 👁 لإظهار الحل لذلك العمود فقط + زر ✓ للتحقق.</div>
     </section>
 
     <section class="card w sheet">
@@ -232,7 +216,7 @@
   </div>
 
   <footer class="foot">
-    <span>© 2025 Kenzi — All Rights Reserved. Unauthorized copying/modification removes legal rights to use.</span>
+    <span>© 2025 Kenzi — All Rights Reserved. Unauthorized copying/modification is prohibited.</span>
   </footer>
 
   <script defer src="app.js"></script>

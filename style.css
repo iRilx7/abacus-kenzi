@@ -6,12 +6,12 @@
 html,body{height:100%; -webkit-text-size-adjust:100%;}
 input,button,select,textarea{font-size:16px;}
 body{margin:0;background:radial-gradient(800px 300px at 50% -5%, #fff0e9, transparent 60%), var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Inter,Roboto,Arial}
-.top{display:flex;justify-content:space-between;align-items:center;padding:18px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
-.brand{font-weight:900;font-size:2rem} /* bigger logo */
+.top{position:sticky;top:0;background:var(--bg);z-index:50;display:flex;justify-content:space-between;align-items:center;padding:18px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.brand{font-weight:900;font-size:2.2rem} /* bigger logo */
 .pill{padding:6px 12px;border-radius:999px;background:#fff;border:1px solid var(--border);font-weight:800}
-.layout{max-width:1200px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:1fr 1fr 340px;gap:14px}
+.layout{max-width:1200px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:1fr 1fr 360px;gap:14px}
 @media (max-width:1100px){.layout{grid-template-columns:1fr}}
-/* CSS-driven tab visibility */
+/* show only current screen */
 .layout[data-screen="trainer"] .card.w{display:none}
 .layout[data-screen="worksheet"] .card.t{display:none}
 
@@ -20,23 +20,31 @@ h2{margin:0 0 10px}
 .group{margin:10px 0}
 .label{font-weight:900;margin-bottom:6px}
 .help,.hint,.small{color:var(--muted);font-size:.9rem}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+
 .row{display:flex;gap:10px;align-items:center}
 .wrap{flex-wrap:wrap}
 .tiles{display:flex;gap:8px;flex-wrap:wrap}
 .tile{cursor:pointer;border:2px solid var(--border);border-radius:12px;padding:10px 14px;background:#fff;color:var(--text);font-weight:900}
 .tile.active{border-color:var(--pri1);box-shadow:0 0 0 3px rgba(255,122,89,.18)}
+
 .stepper{display:flex;align-items:center;gap:8px}
 .stepper .num{width:64px;text-align:center;font-weight:900;font-size:1.2rem;border:2px solid var(--border);border-radius:10px;background:#fff;padding:7px 8px}
+
 .btn{cursor:pointer;border:2px solid var(--border);border-radius:12px;padding:10px 14px;background:#fff;color:var(--text);font-weight:900;transition:.15s transform,.15s filter}
 .btn:hover{filter:brightness(1.06)} .btn:active{transform:scale(.98)}
 .btn.primary{background:linear-gradient(135deg,var(--pri1),var(--pri2));color:white;border:none}
 .btn.danger{background:linear-gradient(135deg,#ff5252,#ff7a7a);color:white;border:none}
-.btn.ghost{background:transparent}
 .btn.sm{padding:8px 10px}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{cursor:pointer;border:2px dashed var(--border);border-radius:999px;background:#fff;color:var(--text);padding:6px 10px;font-weight:800}
 .toggles{display:flex;gap:14px;flex-wrap:wrap}
 .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.stickyStart{position:sticky;bottom:0;background:linear-gradient(180deg, transparent, rgba(255,255,255,.85) 30%, rgba(255,255,255,.95));padding-top:8px}
+.startBig{font-size:1.2rem;padding:14px 22px;border-radius:999px}
+
 .tabs{display:flex;gap:6px}
 .tab{border:2px solid var(--border);background:#fff;border-radius:999px;padding:6px 10px;font-weight:800;cursor:pointer}
 .tab.active{border-color:var(--pri1)}
@@ -46,8 +54,8 @@ h2{margin:0 0 10px}
   display:flex;align-items:center;justify-content:center;min-height:360px;border-radius:16px;
   font-weight:900;font-size:110px;letter-spacing:1px;user-select:none;background:white;border:2px dashed var(--border)
 }
-#displayText{pointer-events:none}
 @media (max-width:520px){.display{min-height:300px;font-size:104px}}
+#displayText{pointer-events:none}
 .dim{opacity:.4}
 .cornerStack{
   position:absolute; top:10px; inset-inline-end:10px;
@@ -61,11 +69,10 @@ h2{margin:0 0 10px}
 #answer{flex:1;padding:12px;border-radius:10px;border:2px solid var(--border);}
 .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .keypad button{padding:14px;border-radius:12px;border:2px solid var(--border);background:#fff;color:var(--text);font-size:1.1rem;font-weight:900}
-.hist{list-style:none;margin:0;padding:0;max-height:260px;overflow:auto}
-.hist li{border-bottom:1px solid var(--border);padding:8px 2px;font-size:.95rem;color:var(--muted)}
+
 .seq{display:flex;gap:8px;flex-wrap:wrap}
 .seq .bubble{padding:6px 10px;border-radius:999px;background:#fff;border:2px solid var(--border);font-weight:800}
-.spacer{flex:1}
+
 .lang{display:flex;gap:8px}
 .lang .chip{border:2px solid var(--border);background:#fff;padding:6px 10px;border-radius:999px;font-weight:800;cursor:pointer}
 
@@ -76,19 +83,25 @@ h2{margin:0 0 10px}
 .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#9eecff)}
 
 .sheetHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.sheetBrand{font-weight:900;font-size:1.6rem} /* bigger */
+.sheetBrand{font-weight:900;font-size:1.8rem} /* bigger */
 .sheetGrid{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
+@media (max-width:760px){.sheetGrid{grid-template-columns:repeat(2,1fr)}}
 .sheetCol{border:2px solid var(--border);border-radius:12px;padding:8px;background:#fff;min-height:200px;position:relative}
 .sheetCol h4{margin:0;font-weight:900;text-align:center;font-size:1rem}
 .sheetCol .divider{height:8px;border-bottom:2px dashed var(--border);margin:4px 0 6px 0}
 .sheetCol .controls{display:flex;gap:6px;margin-bottom:6px;justify-content:center}
 .icn{border:2px solid var(--border);background:#fff;border-radius:10px;padding:4px 8px;font-weight:900;cursor:pointer}
-.sheetCol .ansInput{width:100%;border:2px solid var(--border);border-radius:10px;padding:6px 8px;font-weight:900;text-align:center;margin:4px 0 6px 0}
-.sheetCol .line{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-weight:900;text-align:center;padding:4px 0;border-bottom:1px dashed #eaeef6}
+.sheetCol .ansInput{width:100%;border:2px solid var(--border);border-radius:10px;padding:10px 12px;font-weight:900;text-align:center;margin:4px 0 6px 0}
+.sheetCol .line{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-weight:900;text-align:center;padding:6px 0;border-bottom:1px dashed #eaeef6}
 .sheetCol .ans{margin-top:6px;text-align:center;font-weight:900;color:#1b7a3c}
 .sheetCol.correct .ansInput{border-color:rgba(20,184,94,.6); background:rgba(20,184,94,.08)}
 .sheetCol.wrong .ansInput{border-color:rgba(229,57,53,.6); background:rgba(229,57,53,.08)}
-@media print{
-  body{background:white}
+
+@media (max-width:760px){
+  /* re-order on phones: controls first, then play, then previous */
+  .t.controls{order:1}
+  .t.play{order:2}
+  .t.prev{order:3}
 }
+
 .foot{max-width:1200px;margin:0 auto;padding:16px;color:var(--muted);font-size:.9rem}

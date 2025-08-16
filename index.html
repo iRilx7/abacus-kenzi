@@ -25,11 +25,98 @@
   </header>
 
   <main class="layout" data-screen="trainer">
-    <!-- TRAINER -->
-    <section class="card t prev">
-      <h2 data-i="previous">السؤال السابق</h2>
-      <div id="prevSeq" class="seq"></div>
-      <div class="small muted" id="prevAns"></div>
+    <!-- TRAINER (order tweaked for mobile: controls first) -->
+    <section class="card t controls">
+      <h2 data-i="setup">الإعداد</h2>
+
+      <div class="grid2">
+        <div class="group">
+          <div class="label" data-i="mode">العملية</div>
+          <div class="tiles" id="modeTiles">
+            <button data-val="add" class="tile">+</button>
+            <button data-val="sub" class="tile">−</button>
+            <button data-val="mix" class="tile active" data-i="mixed">+ / − (مخلوط)</button>
+            <button data-val="mul" class="tile">×</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="label" data-i="digits">عدد الخانات لكل رقم</div>
+          <div class="row">
+            <div class="stepper">
+              <button id="digitsMinus" class="btn sm">−</button>
+              <div class="num" id="digitsOut">1</div>
+              <button id="digitsPlus" class="btn sm">+</button>
+            </div>
+            <div class="chips">
+              <button class="chip" data-d="1">1</button>
+              <button class="chip" data-d="2">2</button>
+              <button class="chip" data-d="3">3</button>
+            </div>
+          </div>
+          <div class="help" data-i="strictHelp">
+            <b>الخانات الصارمة</b>: إذا اخترت ٢ خانتين فستظهر أرقام من <b>10 إلى 99</b> فقط. في الطرح نمنع الناتج السالب باستبدال الخطوة بجمع عند الحاجة.
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="label" data-i="howmany">عدد الأرقام المعروضة</div>
+          <div class="row">
+            <div class="stepper">
+              <button id="countMinus" class="btn sm">−</button>
+              <div class="num" id="countOut">3</div>
+              <button id="countPlus" class="btn sm">+</button>
+            </div>
+            <div class="chips">
+              <button class="chip" data-c="3">3</button>
+              <button class="chip" data-c="5">5</button>
+              <button class="chip" data-c="10">10</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="label" data-i="speed">السرعة</div>
+          <div class="row wrap">
+            <div class="mini">
+              <div class="small" data-i="flash">مدة ظهور الرقم (ث)</div>
+              <div class="stepper">
+                <button id="flashMinus" class="btn sm">−</button>
+                <div class="num" id="flashOut">1.0</div>
+                <button id="flashPlus" class="btn sm">+</button>
+              </div>
+            </div>
+            <div class="mini">
+              <div class="small" data-i="gap">الفاصل بين الأرقام (ث)</div>
+              <div class="stepper">
+                <button id="gapMinus" class="btn sm">−</button>
+                <div class="num" id="gapOut">0.2</div>
+                <button id="gapPlus" class="btn sm">+</button>
+              </div>
+            </div>
+            <div class="chips">
+              <button class="chip" data-flash="0.8" data-gap="0.2" data-i="slow">بطيء</button>
+              <button class="chip" data-flash="0.6" data-gap="0.2" data-i="normal">عادي</button>
+              <button class="chip" data-flash="0.4" data-gap="0.1" data-i="fast">سريع</button>
+            </div>
+          </div>
+          <div class="help" data-i="flashExplain">المدة = عرض الرقم، الفاصل = المسافة بين الأرقام.</div>
+        </div>
+      </div>
+
+      <div class="group toggles">
+        <label><input id="beep" type="checkbox" checked> <span data-i="beep">صوت عند كل رقم</span></label>
+        <label><input id="noNegative" type="checkbox" checked> <span data-i="noneg">لا مجموع سالب</span></label>
+        <label><input id="strictDigits" type="checkbox" checked> <span data-i="strict">خانات صارمة</span></label>
+        <label><input id="cornerToggle" type="checkbox" checked> <span data-i="corner">عرض سجل الأرقام في الركن</span></label>
+      </div>
+
+      <div class="actions stickyStart">
+        <button id="startBtn" class="btn primary big startBig" data-i="start">ابدأ</button>
+        <button id="pauseBtn" class="btn" disabled data-i="pause">إيقاف مؤقت</button>
+        <button id="stopBtn" class="btn danger" disabled data-i="stop">إيقاف</button>
+      </div>
+      <div class="hint" data-i="keys">اختصارات: مسافة = ابدأ/أوقف • إنتر = إرسال • R = إعادة</div>
     </section>
 
     <section class="card t play">
@@ -57,89 +144,10 @@
       </div>
     </section>
 
-    <section class="card t controls">
-      <h2 data-i="setup">الإعداد</h2>
-      <div class="group">
-        <div class="label" data-i="mode">العملية</div>
-        <div class="tiles" id="modeTiles">
-          <button data-val="add" class="tile">+</button>
-          <button data-val="sub" class="tile">−</button>
-          <button data-val="mix" class="tile active" data-i="mixed">+ / − (مخلوط)</button>
-          <button data-val="mul" class="tile">×</button>
-        </div>
-      </div>
-      <div class="group">
-        <div class="label" data-i="digits">عدد الخانات لكل رقم</div>
-        <div class="row">
-          <div class="stepper">
-            <button id="digitsMinus" class="btn sm">−</button>
-            <div class="num" id="digitsOut">1</div>
-            <button id="digitsPlus" class="btn sm">+</button>
-          </div>
-          <div class="chips">
-            <button class="chip" data-d="1">1</button>
-            <button class="chip" data-d="2">2</button>
-            <button class="chip" data-d="3">3</button>
-          </div>
-        </div>
-        <div class="help" data-i="strictHelp">
-          <b>الخانات الصارمة</b>: إذا اخترت ٢ خانتين فستظهر أرقام من <b>10 إلى 99</b> فقط. في الطرح نمنع الناتج السالب باستبدال الخطوة بجمع عند الحاجة.
-        </div>
-      </div>
-      <div class="group">
-        <div class="label" data-i="howmany">عدد الأرقام المعروضة</div>
-        <div class="row">
-          <div class="stepper">
-            <button id="countMinus" class="btn sm">−</button>
-            <div class="num" id="countOut">3</div>
-            <button id="countPlus" class="btn sm">+</button>
-          </div>
-          <div class="chips">
-            <button class="chip" data-c="3">3</button>
-            <button class="chip" data-c="5">5</button>
-            <button class="chip" data-c="10">10</button>
-          </div>
-        </div>
-      </div>
-      <div class="group">
-        <div class="label" data-i="speed">السرعة</div>
-        <div class="row wrap">
-          <div class="mini">
-            <div class="small" data-i="flash">مدة ظهور الرقم (ث)</div>
-            <div class="stepper">
-              <button id="flashMinus" class="btn sm">−</button>
-              <div class="num" id="flashOut">1.0</div>
-              <button id="flashPlus" class="btn sm">+</button>
-            </div>
-          </div>
-          <div class="mini">
-            <div class="small" data-i="gap">الفاصل بين الأرقام (ث)</div>
-            <div class="stepper">
-              <button id="gapMinus" class="btn sm">−</button>
-              <div class="num" id="gapOut">0.2</div>
-              <button id="gapPlus" class="btn sm">+</button>
-            </div>
-          </div>
-          <div class="chips">
-            <button class="chip" data-flash="0.8" data-gap="0.2" data-i="slow">بطيء</button>
-            <button class="chip" data-flash="0.6" data-gap="0.2" data-i="normal">عادي</button>
-            <button class="chip" data-flash="0.4" data-gap="0.1" data-i="fast">سريع</button>
-          </div>
-        </div>
-        <div class="help" data-i="flashExplain">المدة = عرض الرقم، الفاصل = المسافة بين الأرقام.</div>
-      </div>
-      <div class="group toggles">
-        <label><input id="beep" type="checkbox" checked> <span data-i="beep">صوت عند كل رقم</span></label>
-        <label><input id="noNegative" type="checkbox" checked> <span data-i="noneg">لا مجموع سالب</span></label>
-        <label><input id="strictDigits" type="checkbox" checked> <span data-i="strict">خانات صارمة</span></label>
-        <label><input id="cornerToggle" type="checkbox" checked> <span data-i="corner">عرض سجل الأرقام في الركن</span></label>
-      </div>
-      <div class="actions">
-        <button id="startBtn" class="btn primary big" data-i="start">ابدأ</button>
-        <button id="pauseBtn" class="btn" disabled data-i="pause">إيقاف مؤقت</button>
-        <button id="stopBtn" class="btn danger" disabled data-i="stop">إيقاف</button>
-      </div>
-      <div class="hint" data-i="keys">اختصارات: مسافة = ابدأ/أوقف • إنتر = إرسال • R = إعادة</div>
+    <section class="card t prev">
+      <h2 data-i="previous">السؤال السابق</h2>
+      <div id="prevSeq" class="seq"></div>
+      <div class="small muted" id="prevAns"></div>
     </section>
 
     <!-- WORKSHEET -->

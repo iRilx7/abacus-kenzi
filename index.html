@@ -120,7 +120,8 @@
       <h2 data-i="play">اللعب</h2>
 
       <div class="display dim" id="display">—</div>
-      <!-- corner "last number" bubble -->
+
+      <!-- Always-on corner "last number" bubble -->
       <div class="lastCorner">
         <span class="label" data-i="last">السابق</span>
         <span id="lastBubble" class="bubble small">—</span>
@@ -134,8 +135,9 @@
         <div><span data-i="elapsed">الوقت</span>: <b id="elapsed">0.0s</b></div>
       </div>
 
-      <div class="answer" id="answerWrap" style="display:none">
-        <input id="answer" type="text" inputmode="numeric" placeholder="..." />
+      <div class="answer" id="answerWrap" style="display:flex">
+        <!-- On touch devices we set readonly + inputmode=none to block phone keyboard -->
+        <input id="answer" type="text" inputmode="none" placeholder="..." />
         <button id="submitBtn" class="btn primary" data-i="submit">إرسال</button>
         <span id="result" class="pill" style="display:none"></span>
       </div>

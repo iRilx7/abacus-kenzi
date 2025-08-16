@@ -62,6 +62,7 @@
   const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
   const fmt=s=>(Math.round(s*10)/10).toFixed(1)+'s';
   const s2ms=s=>Math.round(parseFloat(s)*1000);
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints>0);
 
   // refs
   const status=$("#status"), display=$("#display"), idx=$("#idx"), total=$("#total"), elapsed=$("#elapsed");
@@ -69,6 +70,16 @@
   const overlay=$("#overlay"), readyText=$("#readyText"), barFill=$("#barFill");
   const prevSeq=$("#prevSeq"), prevAns=$("#prevAns"), progFill=$("#progFill");
   const lastBubble=$("#lastBubble");
+
+  // On phones: block native keyboard
+  if(isTouch){
+    answer.setAttribute('readonly','readonly');
+    answer.setAttribute('inputmode','none');
+  } else {
+    // desktop: allow keyboard typing
+    answer.removeAttribute('readonly');
+    answer.setAttribute('inputmode','numeric');
+  }
 
   // options
   let mode="mix", digits=1, count=3, flash=1.0, gap=0.2;
@@ -172,7 +183,7 @@
     display.classList.remove("dim"); display.textContent="•";
     idx.textContent="0"; total.textContent=String(state.seq.length);
     progFill.style.width="0%";
-    answerWrap.style.display="none"; result.style.display="none";
+    result.style.display="none";
     status.textContent=(lang==="ar")?"يعمل":"Running";
     $("#startBtn").disabled=true; $("#pauseBtn").disabled=false; $("#stopBtn").disabled=false;
 
@@ -186,6 +197,7 @@
       progFill.style.width = ((i)/state.seq.length*100).toFixed(1)+"%";
       const signTxt = (it.sign==='+'?'+': it.sign==='-'?'−': it.sign)+' ';
       display.textContent = signTxt + it.val;
+      // always update corner bubble so kids can keep up
       lastBubble.textContent = (it.sign==='×'||it.sign==='') ? String(it.val) : (signTxt + it.val).trim();
       beep(0.04,820);
 
@@ -195,9 +207,9 @@
       if(i<state.seq.length-1){ display.textContent="•"; await sleep(gms); }
     }
     progFill.style.width = "100%";
-
     display.textContent="=?";
-    answerWrap.style.display="flex"; answer.value=""; answer.focus();
+    // Do NOT auto-focus input on touch devices (prevents keyboard)
+    if(!isTouch){ answer.focus(); }
   }
 
   function stop(reset=true){
@@ -205,7 +217,6 @@
     status.textContent=(lang==="ar")?"جاهز":"Idle";
     $("#startBtn").disabled=false; $("#pauseBtn").disabled=true; $("#stopBtn").disabled=true;
     if(reset){ display.textContent="—"; display.classList.add("dim"); }
-    answerWrap.style.display="none"; result.style.display="none";
     idx.textContent="0"; total.textContent="0"; elapsed.textContent="0.0s";
     overlay.style.display="none"; progFill.style.width="0%";
   }
@@ -238,8 +249,8 @@
   }
 
   function submit(){
-    if(!("answer" in state)) return;
-    const raw=(answer.value||"").trim(); if(!raw){ answer.focus(); return; }
+    const raw=(answer.value||"").trim();
+    if(raw==="") return;
     const guess=Number(raw.replace(/[,\s_]/g,""));
     const ok=(guess===state.answer);
 
@@ -265,18 +276,24 @@
   $("#pauseBtn").onclick=()=>{ if(!state.running) return; state.paused=!state.paused; $("#pauseBtn").textContent=state.paused?I[lang].start:I[lang].pause; status.textContent=state.paused?((lang==="ar")?"متوقف":"Paused"):((lang==="ar")?"يعمل":"Running"); };
   $("#stopBtn").onclick=()=> stop();
   $("#submitBtn").onclick=submit;
-  answer.addEventListener("keydown", e=>{ if(e.key==="Enter") submit(); });
-  document.addEventListener("keydown", e=>{
-    if(e.target && ["INPUT","TEXTAREA"].includes(e.target.tagName)) return;
-    if(e.code==="Space"){ e.preventDefault(); if(!state.running){ stop(false); run(); } else { $("#pauseBtn").click(); } }
-    if(e.key.toLowerCase()==="r"){ stop(false); run(); }
-  });
+  if(!isTouch){ // desktop typing
+    answer.addEventListener("keydown", e=>{ if(e.key==="Enter") submit(); });
+    document.addEventListener("keydown", e=>{
+      if(e.target && ["INPUT","TEXTAREA"].includes(e.target.tagName)) return;
+      if(e.code==="Space"){ e.preventDefault(); if(!state.running){ stop(false); run(); } else { $("#pauseBtn").click(); } }
+      if(e.key.toLowerCase()==="r"){ stop(false); run(); }
+    });
+  } else {
+    // on phones, rely on keypad and buttons only
+    document.addEventListener("keydown", e=>{ if(e.code==="Space") e.preventDefault(); });
+  }
+
   $("#keypad").addEventListener("click", e=>{
     if(e.target.tagName!=="BUTTON") return;
     const t=e.target.textContent;
     if(t==="←"){ answer.value=answer.value.slice(0,-1); return; }
     if(t==="✖"){ answer.value=""; return; }
-    if(/\d/.test(t)) answer.value+=t; answer.focus();
+    if(/\d/.test(t)) answer.value+=t;
   });
 
   // export / clear

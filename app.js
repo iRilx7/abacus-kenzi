@@ -1,6 +1,6 @@
 // © 2025 Kenzi. All rights reserved.
 (()=>{
-  // ---------- iOS double-tap zoom guard ----------
+  // iOS double-tap zoom guard
   let lastTouchEnd=0;
   document.addEventListener('touchend', function(e){
     const now=Date.now();
@@ -8,7 +8,7 @@
     lastTouchEnd=now;
   }, {passive:false});
 
-  // ---------- i18n ----------
+  // i18n
   const I = {
     ar: {
       brand:"🧮 كنزي | تدريب الأباكوس",
@@ -29,9 +29,10 @@
       corner:"عرض سجل الأرقام في الركن",
       // worksheet
       wtitle:"مولّد ورقة تدريبات", wcols:"عدد الأعمدة", wrows:"عدد الأرقام بكل عمود",
-      wdigits:"الخانات", wmode:"نوع الإشارات", wgenerate:"توليد ورقة", wprint:"طباعة",
-      whelp:"أرقام تحت بعضها بإشارات +/−. وضعنا خطاً تحت رقم العمود حتى لا يختلط كجزء من السؤال.",
+      wdigits:"الخانات", wmode:"نوع الإشارات", wgenerate:"توليد ورقة",
+      wprint:"طباعة", whelp:"ورقة +/− مع خانة لإجابة الطالب، وخط واضح أسفل رقم العمود.",
       wshowans:"إظهار الإجابة لكل عمود",
+      checkall:"تحقق من جميع الإجابات",
       title:"🧮 كنزي | تدريب الأباكوس للأطفال (Kenzi Abacus)"
     },
     en: {
@@ -51,11 +52,11 @@
       ready:"Get ready!", readyDone:"Go!", correct:"Correct!", answer:"Answer: ",
       last:"Last",
       corner:"Show corner stack",
-      // worksheet
       wtitle:"Worksheet Generator", wcols:"Columns", wrows:"Rows/column",
-      wdigits:"Digits", wmode:"Signs", wgenerate:"Generate", wprint:"Print",
-      whelp:"Kid-style stacked numbers with +/- signs. We added a clear divider under the column number.",
+      wdigits:"Digits", wmode:"Signs", wgenerate:"Generate",
+      wprint:"Print", whelp:"Stacked +/- columns with a student answer box per column.",
       wshowans:"Show answer per column",
+      checkall:"Check all",
       title:"🧮 Kenzi | Abacus Trainer (Kids)"
     }
   };
@@ -86,7 +87,8 @@
       $$(".card.w").forEach(c=> c.style.display=(scr==="worksheet")?"block":"none");
     };
   });
-  $$(".card.t").forEach(c=> c.style.display="none"); // default show worksheet first for your screenshot
+  // default = trainer
+  $$(".card.w").forEach(c=> c.style.display="none");
 
   // helpers
   const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
@@ -95,7 +97,7 @@
   const s2ms=s=>Math.round(parseFloat(s)*1000);
   const isTouch=('ontouchstart' in window)|| (navigator.maxTouchPoints>0);
 
-  // trainer refs
+  // trainer
   const status=$("#status"), displayText=$("#displayText"), idx=$("#idx"), total=$("#total"), elapsed=$("#elapsed");
   const answer=$("#answer"), result=$("#result");
   const overlay=$("#overlay"), barFill=$("#barFill");
@@ -109,7 +111,6 @@
   function updateCornerVisibility(){ cornerStack.style.display = cornerToggle.checked ? 'flex':'none'; }
   cornerToggle.addEventListener('change', updateCornerVisibility); updateCornerVisibility();
 
-  // options
   let mode="mix", digits=1, count=3, flash=1.0, gap=0.2;
   let strictDigits=true, noNegative=true, beeps=true;
   $("#modeTiles").addEventListener("click", e=>{
@@ -148,13 +149,11 @@
     const {min:autoMin,max:autoMax}=digitRange(digits);
     const min=autoMin, max=autoMax;
     const seq=[]; let running=0;
-
     if(mode==="mul"){
       const a=ri(min,max), b=ri(min,max);
       seq.push({sign:'×',val:a}); seq.push({sign:'',val:b});
       return {seq, answer:a*b};
     }
-
     for(let i=0;i<count;i++){
       let s = (mode==="add")?'+':(mode==="sub")?'-':(Math.random()<0.5?'+':'-');
       if(s==='-' && noNegative){
@@ -194,47 +193,35 @@
   }
 
   async function run(){
-    const pack=genSequence();
-    state.seq=pack.seq; state.answer=pack.answer;
+    const pack=genSequence(); state.seq=pack.seq; state.answer=pack.answer;
     state.running=true; state.paused=false; state.startTs=performance.now();
-
-    document.getElementById("display").classList.remove("dim"); displayText.textContent="•";
+    $("#display").classList.remove("dim"); displayText.textContent="•";
     idx.textContent="0"; total.textContent=String(state.seq.length);
     progFill.style.width="0%"; result.style.display="none"; cornerStack.innerHTML="";
-    status.textContent=(lang==="ar")?"يعمل":"Running";
+    $("#status").textContent=(lang==="ar")?"يعمل":"Running";
     $("#startBtn").disabled=true; $("#pauseBtn").disabled=false; $("#stopBtn").disabled=false;
-
     showOverlay(1200); await sleep(1300);
-
     const fms=s2ms(flash), gms=s2ms(gap);
     for(let i=0;i<state.seq.length;i++){
       if(!state.running) return; await waitWhilePaused();
-      const it=state.seq[i];
-      idx.textContent=String(i+1);
+      const it=state.seq[i]; idx.textContent=String(i+1);
       progFill.style.width=((i)/state.seq.length*100).toFixed(1)+"%";
       const signTxt = (it.sign==='+'?'+': it.sign==='-'?'−': it.sign)+' ';
-      displayText.textContent = signTxt + it.val;
-      beep(0.04,820);
-
+      displayText.textContent = signTxt + it.val; beep(0.04,820);
       elapsed.textContent = fmt((performance.now()-state.startTs)/1000);
       await sleep(fms); if(!state.running) return; await waitWhilePaused();
-
       const txt=(it.sign==='×'||it.sign==='')? String(it.val):(signTxt+it.val).trim();
       const node=document.createElement("div"); node.className="bubble"; node.textContent=txt;
-      cornerStack.appendChild(node);
-      if(cornerStack.children.length>60) cornerStack.removeChild(cornerStack.firstChild);
-
+      cornerStack.appendChild(node); if(cornerStack.children.length>60) cornerStack.removeChild(cornerStack.firstChild);
       if(i<state.seq.length-1){ displayText.textContent="•"; await sleep(gms); }
     }
-    progFill.style.width="100%";
-    displayText.textContent="=?";
-    if(!isTouch){ answer.focus(); }
+    progFill.style.width="100%"; displayText.textContent="=?"; if(!isTouch){ answer.focus(); }
   }
 
   function stop(reset=true){
     state.running=false; state.paused=false;
     $("#startBtn").disabled=false; $("#pauseBtn").disabled=true; $("#stopBtn").disabled=true;
-    if(reset){ displayText.textContent="—"; document.getElementById("display").classList.add("dim"); }
+    if(reset){ displayText.textContent="—"; $("#display").classList.add("dim"); }
     idx.textContent="0"; total.textContent="0"; elapsed.textContent="0.0s";
     overlay.style.display="none"; progFill.style.width="0%";
     $("#status").textContent=(lang==='ar')?'جاهز':'Idle';
@@ -264,7 +251,6 @@
     $("#startBtn").disabled=false; $("#pauseBtn").disabled=true; $("#stopBtn").disabled=true;
     if(isTouch){ answer.blur(); }
   }
-
   $("#startBtn").onclick=()=>{ stop(false); run(); };
   $("#pauseBtn").onclick=()=>{ if(!state.running) return; state.paused=!state.paused; $("#pauseBtn").textContent=state.paused?(lang==='ar'?'ابدأ':'Start'):(lang==='ar'?'إيقاف مؤقت':'Pause'); $("#status").textContent=state.paused?(lang==='ar'?'متوقف':'Paused'):(lang==='ar'?'يعمل':'Running'); };
   $("#stopBtn").onclick=()=> stop();
@@ -300,6 +286,7 @@
 
   // Worksheet generator
   let wCols=10, wRows=5, wDigits=2, wMode="mix", wShowAns=false;
+  let sheetData=[]; // store generated columns to avoid regen
   const wColsOut=$("#wColsOut"), wRowsOut=$("#wRowsOut"), wDigitsOut=$("#wDigitsOut");
   const wColClamp=n=>clamp(n,1,20), wRowClamp=n=>clamp(n,3,12);
   $("#wColsMinus").onclick=()=>{ wCols=wColClamp(wCols-1); wColsOut.textContent=wCols; };
@@ -312,34 +299,67 @@
     if(!e.target.classList.contains("tile")) return;
     wMode=e.target.dataset.val; $$("#wModeTiles .tile").forEach(x=>x.classList.remove("active")); e.target.classList.add("active");
   });
-  $("#wShowAns").onchange=e=>{ wShowAns = e.target.checked; };
+  $("#wShowAns").onchange=e=>{ wShowAns = e.target.checked; refreshAnswerVisibility(); };
 
   function riDigits(d){ const a=Math.pow(10,d-1), b=Math.pow(10,d)-1; return ri(a,b); }
   function signPick(){ return wMode==="add"?'+': wMode==="sub"?'-': (Math.random()<0.5?'+':'-'); }
 
+  function buildCol(index){
+    const col=document.createElement("div"); col.className="sheetCol"; col.dataset.index=index;
+    const h=document.createElement("h4"); h.textContent=String(index); col.appendChild(h);
+    const div=document.createElement("div"); div.className="divider"; col.appendChild(div);
+
+    const input=document.createElement("input"); input.className="ansInput"; input.placeholder=(lang==='ar'?'إجابة الطالب':'Student answer');
+    input.setAttribute('inputmode','numeric'); col.appendChild(input);
+
+    let sum=0; const terms=[];
+    for(let r=0;r<wRows;r++){
+      const line=document.createElement("div"); line.className="line";
+      const s=signPick(); const num=riDigits(wDigits);
+      if(s==='+'){ sum += num; line.textContent = String(num); terms.push({sign:'+',val:num}); }
+      else { sum -= num; line.textContent = '−' + String(num); terms.push({sign:'-',val:num}); }
+      col.appendChild(line);
+    }
+    const a=document.createElement("div"); a.className="ans"; a.textContent=(lang==='ar'?'الإجابة: ':'Ans: ')+String(sum);
+    if(!wShowAns) a.style.display="none";
+    col.appendChild(a);
+
+    input.addEventListener('change', ()=>{
+      const v=Number(input.value.trim()); col.classList.remove('correct','wrong');
+      if(!isNaN(v)){
+        if(v===sum) col.classList.add('correct'); else col.classList.add('wrong');
+      }
+    });
+
+    sheetData[index-1]={sum, terms};
+    return col;
+  }
+
   function makeSheet(){
+    sheetData = new Array(wCols).fill(null);
     const grid=$("#sheet"); grid.innerHTML="";
     $("#sheetMeta").textContent=new Date().toLocaleString();
-    for(let c=1;c<=wCols;c++){
-      const col=document.createElement("div"); col.className="sheetCol";
-      const h=document.createElement("h4"); h.textContent=String(c); col.appendChild(h);
-      const div=document.createElement("div"); div.className="divider"; col.appendChild(div);
-      let sum=0;
-      for(let r=0;r<wRows;r++){
-        const line=document.createElement("div"); line.className="line";
-        const s=signPick(); const num=riDigits(wDigits);
-        if(s==='+'){ sum += num; line.textContent = String(num); }
-        else { sum -= num; line.textContent = '−' + String(num); }
-        col.appendChild(line);
-      }
-      if(wShowAns){
-        const a=document.createElement("div"); a.className="ans"; a.textContent=(lang==='ar'?'الإجابة: ':'Ans: ')+String(sum);
-        col.appendChild(a);
-      }
-      grid.appendChild(col);
-    }
+    for(let c=1;c<=wCols;c++){ grid.appendChild(buildCol(c)); }
+  }
+  function refreshAnswerVisibility(){
+    $$(".sheetCol .ans").forEach(a=> a.style.display = wShowAns ? "block":"none");
   }
   $("#genSheet").onclick=makeSheet;
-  $("#printSheet").onclick=()=>window.print();
+  $("#checkAll").onclick=()=>{
+    $$(".sheetCol").forEach(col=>{
+      const input=col.querySelector(".ansInput"); const a=col.querySelector(".ans").textContent.replace(/[^0-9\-]/g,'');
+      const sum=Number(a); const v=Number((input.value||'').trim()); col.classList.remove('correct','wrong');
+      if(!isNaN(v)) { col.classList.add(v===sum?'correct':'wrong'); }
+    });
+  };
+  $("#printStudent").onclick=()=>{
+    // hide answers temporarily
+    const prev=wShowAns; wShowAns=false; refreshAnswerVisibility(); window.print(); wShowAns=prev; refreshAnswerVisibility();
+  };
+  $("#printAnswers").onclick=()=>{
+    const prev=wShowAns; wShowAns=true; refreshAnswerVisibility(); window.print(); wShowAns=prev; refreshAnswerVisibility();
+  };
+
+  // initial sheet
   makeSheet();
 })();

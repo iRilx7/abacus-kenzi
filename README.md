@@ -1,6 +1,5 @@
-# Kenzi | Abacus Trainer (Kids) — v9
-- Extra iOS anti‑zoom (global `touch-action: manipulation`, double‑tap guard)
-- Worksheet: clear **divider under column number**, and **Show answers** toggle (sum per column)
-- Trainer: corner stack, Arabic-first, Enter doesn’t zoom, Flash/Gap up to 5s
-
-Deploy: upload files to repo root and enable GitHub Pages (main /(root)).
+# Kenzi | Abacus Trainer (Kids) — v10
+- Default tab = **Trainer**
+- Bigger display on phones; anti-zoom: input font-size 16+, touch-action manipulation, double-tap guard, blur on submit
+- Worksheet: per-column **student answer** box, **Show answers** toggle (instant), **Check all**, **Print student** / **Print with answers**
+- Arabic-first, corner stack, strict digits, up to 5s Flash/Gap

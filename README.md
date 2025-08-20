@@ -1,4 +1,4 @@
-# Kenzi | Abacus Trainer (Kids) — v14
+# Yahya | Abacus Trainer (Kids) — v14
 **What’s new**
 - Clear result banner with animation: green ✓ for correct, red ✗ with the right answer for wrong.
 - Desktop width tuned (max 1040px) so you don’t need to zoom out.

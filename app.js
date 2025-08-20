@@ -7,7 +7,7 @@
   }, {passive:false});
 
   const I = { ar: {
-      brand:"🧮 كنزي الصوفي | تدريب العداد الصيني", trainer:"التدريب", worksheet:"ورقة تدريبات",
+      brand:"🧮   | تدريب العداد الصيني", trainer:"التدريب", worksheet:"ورقة تدريبات",
       setup:"الإعداد", mode:"العملية", mixed:"+ / − (مخلوط)", digits:"عدد الخانات لكل رقم",
       howmany:"عدد الأرقام المعروضة", speed:"السرعة", flash:"مدة ظهور الرقم (ث)", gap:"الفاصل بين الأرقام (ث)",
       flashExplain:"المدة = عرض الرقم، الفاصل = المسافة بين الأرقام.", beep:"صوت عند كل رقم", noneg:"لا مجموع سالب", strict:"خانات صارمة",
@@ -36,7 +36,7 @@
   const $$ = s=>Array.from(document.querySelectorAll(s));
   function applyI18n(){
     const t=I[lang]; document.documentElement.lang=lang; document.documentElement.dir=(lang==="ar")?"rtl":"ltr";
-    document.title="🧮 كنزي الصوفي | تدريب العداد الصيني للأطفال (Kenzi AL-Soufi Abacus)"; $("#brand").textContent=t.brand;
+    document.title="🧮   | تدريب العداد الصيني للأطفال (  Abacus)"; $("#brand").textContent=t.brand;
     $$("[data-i]").forEach(el=>{ const k=el.getAttribute("data-i"); if(t[k]) el.textContent=t[k]; });
     $("#status").textContent=(lang==='ar')?'جاهز':'Idle'; $("#readyText").textContent=t.ready||"استعد!";
   }
